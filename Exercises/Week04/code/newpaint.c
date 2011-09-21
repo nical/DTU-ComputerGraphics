@@ -110,7 +110,12 @@ each time window is resized */
         glFlush();
 }
 
-
+/** Mouse callback function
+ *  
+ *  This needs to be written like this, since the glutMouseFunc requires a
+ *  mouse callback to pass the button pressed, the state of the button and
+ *  the actual coordinates of the mouse
+ */
 
 void mouse(int btn, int state, int x, int y)
 {
@@ -211,9 +216,13 @@ void mouse(int btn, int state, int x, int y)
      }
 }
 
+//  Pick function. I guess it selects the button that was clicked
+
 int pick(int x, int y)
 {
     y = wh - y;
+    //  Since the buttons are squares, we check if we clicked in the top
+    //  part of the window (that is window width / 10 in height)
     if(y < wh-ww/10) return 0;
     else if(x < ww/10) return LINE;
     else if(x < ww/5) return RECTANGLE;
