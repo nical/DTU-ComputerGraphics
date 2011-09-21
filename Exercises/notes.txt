@@ -1,0 +1,2 @@
+Part1:
+The pick function looks at the coordinates passed in parameter and deduce which square has been picked.
