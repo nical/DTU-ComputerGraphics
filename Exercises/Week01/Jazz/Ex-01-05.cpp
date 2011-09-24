@@ -6,9 +6,15 @@
 #include <GL/glut.h>
 #include <math.h>
 
+#define SEGS        100
+#define CENTRE_X      0
+#define CENTRE_Y      0
+#define RADIUS      5.0
+
 void Init (void);
 void Display (void);
 void Reshape (int w, int h);
+void computeCircleVertices (double, double, float, double [][2], int);
 
 int main (int argc, char **argv){
 	glutInit (&argc, argv);
@@ -33,7 +39,7 @@ void Init (void) {
 	glShadeModel (GL_SMOOTH);
 }
 
-void computeCircleVertices (double x, double y, float radius, double** vertices, int segments_count){
+void computeCircleVertices (double x, double y, float radius, double vertices[][2], int segments_count){
   int i;
   double theta = 0;
 
@@ -44,79 +50,61 @@ void computeCircleVertices (double x, double y, float radius, double** vertices,
   }
 }
 
+void drawAxes (float size_x, float size_y, double primary_scale, double secondary_scale) {
+  int i, steps;
+
+  glVertex2d (size_x, 0.);
+  glVertex2d (-size_x, 0.);
+  glVertex2d (0., size_y);
+  glVertex2d (0., -size_y);
+
+  steps = ceil(size_x / primary_scale);
+
+  for (i = 1; i <= steps; i++) {
+    glVertex2d (i * primary_scale, 0.);
+    glVertex2d (i * primary_scale, 1.);
+    
+    glVertex2d (i * -primary_scale, 0.);
+    glVertex2d (i * -primary_scale, 1.);
+ }
+
+}
+
 void Display (void){
 	
-	float V[][2] ={
- 		-5.,-5.,
-		-5., 5.,
-		 8., 5.,
-		 8.,-5.
-	};
+  double circle[SEGS][2];
+  int i;
 
-  float triangle[3][2] = {
-    2, 2,
-    5, 2,
-    3.5, 5,
-  };
+  computeCircleVertices (CENTRE_X, CENTRE_Y, RADIUS, circle, SEGS);
 
 	glClear (GL_COLOR_BUFFER_BIT);
 	 
-  //  We save the current translation matrix, which is in [0, 0, 0]
-  glPushMatrix ();
-
-  //  All right.  Here's the deal. I've done this since I needed to rotate
-  //  the rectangle on the centre of the tirangle (if I didn't get the
-  //  assignment wrong), so I have to add to the triangle's vector the
-  //  position of its centre.
-  glTranslatef ((6. + 3.5), (7. + 3.5), 0.);
-  glRotatef (45., 0., 0., 1.);
-  //  After the rotation I get back to the centre of the scene, mantaining
-  //  the rotation
-  glTranslatef (-8., -10.5, 0.);
-  //  Draw the rectangle
   glColor3f (1., 1., 0.);
-  glBegin (GL_POLYGON);
-		glVertex2fv (V[0]);
-		glVertex2fv (V[1]);
-		glVertex2fv (V[2]);
-		glVertex2fv (V[3]);
+  glBegin (GL_LINE_LOOP);
+		for (i = 0; i < SEGS; i++) {
+		  glVertex2dv (circle[i]);
+    }
 	glEnd ();
 
-  glColor3f (0., 0.5, 1.);
   glBegin (GL_LINES);
-    glVertex2f (-10., 0.);
-    glVertex2f (10., 0.);
-    glVertex2f (0, 7.5);
-    glVertex2f (0, -7.5);
-  glEnd ();
-
-  //  And then, restore the transform matrix
-  glPopMatrix();
-  glPushMatrix();
-   
-  //  Shift the drawing origin by the vector [6, 7, 0]
-  glTranslatef (6., 7., 0.);
-
-  /*  Ok, this looks nice :3
-   *  We'd use this: 
-   *    glColor3f (1., 0., 0.);
-   *  to draw the triangle all red. But since now we want the triangle to
-   *  be shaded, we are going to give every single vertix a different
-   *  colour.
-   */
-  glBegin (GL_TRIANGLES);
-    glColor3f (1., 0., 0.);
-    glVertex2fv (triangle[0]);
+    glColor3f (0., 0.5, 1.);
+    glVertex2f (15., 0.);
+    glVertex2f (-15., 0.);
+    glVertex2f (0., 15.);
+    glVertex2f (0., -15.);
     
-    glColor3f (0., 1., 0.);
-    glVertex2fv (triangle[1]);
-
-    glColor3f (0., 0., 1.);
-    glVertex2fv (triangle[2]);
+    glColor3f (1., 0., 0.);
+    glVertex2f (RADIUS, 2.);
+    glVertex2f (RADIUS, -2.);
+    glVertex2f (-RADIUS, 2.);
+    glVertex2f (-RADIUS, -2.);
+    
+    glVertex2f (2., RADIUS);
+    glVertex2f (-2., RADIUS);
+    glVertex2f (2., -RADIUS);
+    glVertex2f (-2., -RADIUS);
+    
   glEnd ();
-
-  //  Let's restore the matrix for the next drawing.
-  glPopMatrix ();
 
 	glFlush ();
 }
@@ -128,7 +116,9 @@ void Reshape (int w, int h){
 	glColor3f (1., 1., 0.);
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	gluOrtho2D (-15., 15., -10., 15.);
+  //  The h / w is needed to have fixed ratio. We don't want an ellipse
+  //  while trying to draw a circle, right?
+	gluOrtho2D (-15. , 15., -15. * (float) h / w, 15. * (float) h / w);
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 }
