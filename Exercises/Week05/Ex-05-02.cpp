@@ -15,7 +15,7 @@ int main (int argc, char** argv)
 	glutInitWindowSize (500,500);
 	glutInitWindowPosition (100,100);
 
-	glutCreateWindow ("02561-05-01");
+	glutCreateWindow ("Second Excercise");
 
 	init (); 
 	glutDisplayFunc (display);
@@ -26,14 +26,18 @@ int main (int argc, char** argv)
 
 void init (void)
 {
-	glClearColor (1.,1.,1.,1.);
+	
+  glClearColor (1.,1.,1.,1.);
 	glShadeModel (GL_FLAT);
 	glEnable (GL_DEPTH_TEST);
+
+  
 }
 
 void display (void)
 {
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	glColor3f (1., 0., 0.);
 
@@ -67,7 +71,9 @@ void display (void)
 
 void reshape (int w, int h)
 {
-	glViewport (0, 0, (GLsizei) w, (GLsizei) h); 
+  GLdouble planeEqn[4] = {0, 1, 0, 0};
+	
+  glViewport (0, 0, (GLsizei) w, (GLsizei) h); 
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
 	gluPerspective (90., (GLfloat) w / (GLfloat) h, 4., 50.);
@@ -76,6 +82,10 @@ void reshape (int w, int h)
   /*  The camera is positioned in [20, 10, 0] and is pointing toward [0,
    *  10, 0], while the up vector is toward [0, 0, 1]
    */
-  gluLookAt (20., 10., 0., 0., 10., 0., 0., 0., 1.);
+  gluLookAt (20., 20., 20., 0., 10., 0., 0., 0., 1.);
 
+  //  We are going to do this here to use the World Coordinates instead of
+  //  the Viewport coordinates
+  glClipPlane (GL_CLIP_PLANE0, planeEqn);
+  glEnable (GL_CLIP_PLANE0);
 }
