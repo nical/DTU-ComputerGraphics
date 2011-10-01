@@ -1,0 +1,30 @@
+The objective of this part of the project was to design and to implement on
+an \nxtOSEK{} system a digital controller for a vehicle in order to make it
+follow a wall at a given distance.
+
+\section{The steps needed to design a Digital Controller}
+
+  The steps in designing and implementing a controller to follow a wall are
+  very much the same as the one needed in implementing a digital controller
+  for a motor:
+  
+  \begin{itemize}
+    
+    \item{} We have to compute new values for $\xi$ and $\omega_n$
+      accordingly to our needs (i.e. how much time should it take to reach
+      the required distance or how big should be the overshoot)
+    \item{} Once we have computed them we have to use a graphical analysis
+      method such as the Root Locus to design a Continuous time Laplace
+      Transfer function to change the Closed Loop behaviour of our model
+    \item{} Design a way to compute correctly our distance from the wall
+    \item{} Implement the controller on the plataform
+
+  \end{itemize}
+
+  This time, however, other problems arose, such the fact that the
+  controller for the motors was not designed correctly due to a bad
+  motor identification or the fact that the ultrasonic distance sensors of
+  the \nxt{} have limitations that hindered our design.
+  
+  Each one of these was taken in account during this last part of the
+  project, as can be read in the next two sections.
