@@ -33,6 +33,19 @@
     uses, provides, bro_bt_device_t, bdaddr_t, scicos_block}
 }
 
+% args: image path
+%       caption
+%       width
+%       label
+\newcommand{\image}[4]{%
+    \begin{figure}[hbt]%
+    \centering%
+    \includegraphics[width=#3\columnwidth]{#1}%
+    \caption{\emph{#2}}%
+    \label{#4}%
+    \end{figure}%
+}
+
 
 \newcommand{\Eqn}[1]{Equation~(\ref{#1})}
 \newcommand{\Abs}[1]{\left|\:#1\:\right|}
