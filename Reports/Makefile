@@ -1,6 +1,6 @@
 .PHONY : all clean index dir
 
-TEX := assignment01.tex
+TEX := assignment.tex
 SUBTEXS := $(shell find . -mindepth 2 -name '*.tex')
 PDF := $(TEX:.tex=.pdf)
 OUTDIR := ./out
