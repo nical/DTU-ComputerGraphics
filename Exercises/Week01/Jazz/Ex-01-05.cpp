@@ -85,7 +85,7 @@ void Display (void){
 		  glVertex2dv (circle[i]);
     }
 	glEnd ();
-
+/*
   glBegin (GL_LINES);
     glColor3f (0., 0.5, 1.);
     glVertex2f (15., 0.);
@@ -105,7 +105,7 @@ void Display (void){
     glVertex2f (-2., -RADIUS);
     
   glEnd ();
-
+*/
 	glFlush ();
 }
 

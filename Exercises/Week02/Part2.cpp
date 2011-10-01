@@ -34,7 +34,7 @@ void setupViewer()
 {
         glMatrixMode (GL_MODELVIEW);
         glLoadIdentity ();
-
+/*
         // first set the z axis to point upward
         glRotatef( -90, 1, 0, 0 );
 
@@ -45,6 +45,12 @@ void setupViewer()
         // This could do it but we'd like the axis to face us
         // instead of looking away so just one more rotation
         glRotatef( 180, 0, 0, 1 );
+
+        */ 
+        glRotatef(35, 1, 0, 0);
+        glRotatef(-135, 0, 1, 0);
+        glRotatef(-90, 1, 0, 0);
+        
 }
 
 void initgl (void) {

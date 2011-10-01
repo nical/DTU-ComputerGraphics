@@ -10,6 +10,7 @@ within the $[0,1][0,1]$ intervals with respect to x an y coordinates.
 gluOrtho2d as used below defines a scale and a translation so that the viewer sees object
 located within $[-10,10][-10,10]$    
 
+
 glMatrixMode is a primitive that selects the current matrix, so that OpenGL matrix
 operations carried after are operated on the one selected (projection or modelview)
 
@@ -23,43 +24,73 @@ operations carried after are operated on the one selected (projection or modelvi
 \section{Part 2}
 
 Here are the lines modified as requested in the assignment
-\begin{verbatim}
- glLoadIdentity ();
+\begin{lstlisting}[caption=Snapshot from Part2.cpp]
 glLoadIdentity ();
-	glTranslated(1.5,0,0);
-	glRotated(45, 0, 0, 1);
-	glTranslated(-1.5,0,0);
-    glColor3f(1.0,1.0,0.0);
-    glBegin (GL_POLYGON);
-		glVertex2fv (V[0]);
-		glVertex2fv (V[1]);
-		glVertex2fv (V[2]);
-		glVertex2fv (V[3]);
-	glEnd ();
+glTranslated(1.5,0,0);
+glRotated(45, 0, 0, 1);
+glTranslated(-1.5,0,0);
+glColor3f(1.0,1.0,0.0);
+glBegin (GL_POLYGON);
+    glVertex2fv (V[0]);
+    glVertex2fv (V[1]);
+    glVertex2fv (V[2]);
+    glVertex2fv (V[3]);
+glEnd ();
 
-	glLoadIdentity();
-	glTranslated(6,7,0);
-	glBegin(GL_TRIANGLES);
-		glColor3f (1.0, 0.0, 0.0);
-		glVertex2f(2.0, 2.0);
-		glColor3f (0.0, 1.0, 0.0);
-		glVertex2f(5.0, 2.0);
-		glColor3f (0.0, 0.0, 1.0);
-		glVertex2f(3.5,5);
-	glEnd();
+glLoadIdentity();
+glTranslated(6,7,0);
+glBegin(GL_TRIANGLES);
+    glColor3f (1.0, 0.0, 0.0);
+    glVertex2f(2.0, 2.0);
+    glColor3f (0.0, 1.0, 0.0);
+    glVertex2f(5.0, 2.0);
+    glColor3f (0.0, 0.0, 1.0);
+    glVertex2f(3.5,5);
 glEnd();
-\end{verbatim}
+\end{lstlisting}
 
-This give the following result:
+This gives the following result:
 
-\includegraphics[!h]{Week1/Part1.png}
-
-
-
-\section{Part 3}
+\image{Week01/Part2.png}{Output image of Part 2.}{0.5}{img:p2}
 
 
-\section{Part 4}
+%\section{Part 3}
+
+
+
+%\section{Part 4}
 
 
 \section{Part 5}
+
+\image{Week01/Part05.png}{Output image of Part 5.}{0.5}{img:p5}
+
+\section{Part 6}
+
+TODO!
+
+\section{Part 7}
+The required transformations have been implemented in the function display below:
+\begin{lstlisting}[caption=Snapshot from Part7.cpp]
+void display (void) {
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glColor3f (1.,1.,1.);
+    // tansformation
+    glTranslated(0,3,0);
+    glRotated(30,0,1,0);
+    glScaled(2,2,2);
+    // draw the cube
+    glutWireCube (1.);
+    // draw the axis 
+    glLoadIdentity();
+    axis();
+    glFlush ();
+}
+\end{lstlisting}
+
+\image{Week01/Part7.png}{Output image of Part 7.}{0.5}{img:p5}
+
+\section{Part 8}
+
+\image{Week01/Part8.png}{Output image of Part 8.}{0.5}{img:p5}
+

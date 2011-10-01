@@ -1,0 +1,36 @@
+\chapter{Week 3}
+
+\section{Part 1}
+
+A rasterization process like OpenGL uses cannot easily simulate real light, and
+more importantly indirect lighting. In real life when sun rays enter a room, they
+bounce on walls, which provides lighting for parts that dont directly face the light
+sources. To emulate the effect of indirect lighting, OpenGL includes the ambient
+term in its lighting equation. What it does is basically apply a base colour to
+every vertice regardless of the orientaion of its normal. 
+~\\
+~\\
+TODO: 2nd ambiant component ??
+
+\image{Week03/Part1.png}{Output image of Part 1.}{0.5}{img:w2p1}
+
+\section{Part 2}
+
+\section{Part 3}
+The distance between the eye and the object is not taken into account by the phong
+equation - only the direction is - therefore, puting the eye at infinity does not
+change the lighting of the object.\\
+The vew vector - vector between the eye and the object, thus dependent on the
+eye position - influences the specular component.\\
+The object will not get illuminated - except for ambiant - by the light source if the later is placed at
+infinity, because the equation includes an attenuation term accounting for the
+distance between the objetc and the light source.\\
+Binding the light source to the eye point results illumination only dependent on
+the viewer, with the most illuminated parts being the one with normals directed
+toward the viewer. For instance turning around a sphere would give the same
+result whichever direction the viewer is looking the sphere from.\\
+Directional lights correspond to point lights placed at infinity without attenuation
+term. This kind of light are generally used to simulate the effect of powerful
+and very distant light sources like the sun.\\
+
+\section{Part 4}
