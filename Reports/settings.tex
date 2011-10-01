@@ -3,6 +3,37 @@
 \usepackage{graphicx}
 %\usepackage{a4}
 
+
+\usepackage{color}
+\definecolor{Brown}{cmyk}{0,0.81,1,0.60}
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{CadetBlue}{cmyk}{0.70,0.57,0.23,0}
+
+\usepackage{listings}
+\lstset{language=[ansi]C,
+        frame=tRBl, %
+        frameround=ftff, %
+        basicstyle=\footnotesize, %
+        keywordstyle=\ttfamily\color{OliveGreen}, %
+        identifierstyle=\ttfamily\color{CadetBlue}\bfseries, %
+        commentstyle=\slshape\ttfamily\color{Brown}, %
+        stringstyle=\ttfamily, %
+        showstringspaces=true, %
+        captionpos=b
+}
+
+\lstset{
+    morekeywords={U8, S8, U16, S16, U32, S32, bool, size_t, uint8_t,
+    uint16_t, uint32_t, int8_t, int16_t, nx_bmp_t, int32_t,
+    nx_rs485_error_t, nx_rs485_baudrate_t, nx_aic_priority_t, action_t,
+    nx_struct, nx_uint8_t, nxt_protocol_header_t, nx_union, nxle_int8_t,
+    nxle_uint32_t, nxle_uint16_t, nxle_int16_t, nxt_protocol_t, action_t,
+    atomic, norace, command, event, error_t, signal, call, task, post,
+    configuration, implementation, components, as, module, interface,
+    uses, provides, bro_bt_device_t, bdaddr_t, scicos_block}
+}
+
+
 \newcommand{\Eqn}[1]{Equation~(\ref{#1})}
 \newcommand{\Abs}[1]{\left|\:#1\:\right|}
 
