@@ -58,12 +58,13 @@ void Display (void){
 
 
 	glClear (GL_COLOR_BUFFER_BIT);
-
+    
     glLoadIdentity ();
 	glTranslated(1.5,0,0);
 	glRotated(45, 0, 0, 1);
 	glTranslated(-1.5,0,0);
-	glBegin (GL_POLYGON);
+    glColor3f(1.0,1.0,0.0);
+    glBegin (GL_POLYGON);
 		glVertex2fv (V[0]);
 		glVertex2fv (V[1]);
 		glVertex2fv (V[2]);
