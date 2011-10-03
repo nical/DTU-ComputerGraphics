@@ -67,7 +67,31 @@ This gives the following result:
 
 \section{Part 6}
 
-TODO!
+
+Given a viewport defined by the coordinates $[x_{w1},x_{w2},y_{w1},y_{w2}]$ and $[x_{v1},x_{v2},y_{v1},y_{v2}]$,
+the matrix mapping a point $(x_{w},y_{w})$ to the point $(x_{v},y_{v})$
+ is:
+
+
+$$
+\begin{pmatrix}
+    A& 0& 0& tx \\
+    0& B& 0& ty \\
+    0& 0& 0& 0 \\
+    0& 0& 0& 1 \\
+\end{pmatrix}
+$$
+
+With the scaling components\\
+\begin{align*}
+    A &= \frac{1}{sx} = \frac{1}{(x_{min}-x_{u2})/(x_{v1}-x_{v2})} \\
+    B &= \frac{1}{sy} = \frac{1}{(y_{min}-y_{u2})/(y_{v1}-y_{v2})}
+\end{align*}
+And the translation components\\
+\begin{align*}
+   t_x &= x_{v1}-x_{u2} \\
+   t_y &= y_{v1}-y_{u2} 
+\end{align*}
 
 \section{Part 7}
 The required transformations have been implemented in the function display below:
@@ -88,9 +112,67 @@ void display (void) {
 }
 \end{lstlisting}
 
+A translation matrix can is expressed as follows:
+$$
+\begin{pmatrix}
+	1&	0& 	0&	tx\\
+	0&	1&	0&	ty\\
+	0&	0&	1&	tz\\
+	0&	0&	0&	1
+\end{pmatrix}
+$$
+A rotation around y is:
+$$
+\begin{pmatrix}
+	cos(\theta)&	0& 	sin(\theta)&	0\\
+	0&	        1&	0&	        0\\
+	-sin(\theta)&	0&	cos(\theta)&	0\\
+	0&	        0&	0&	        1\\
+\end{pmatrix}
+$$
+And a scale is written as:
+$$
+\begin{pmatrix}
+	sx	0 	0	0
+	0	sy	0	0
+	0	0	sz	0
+	0	0	0	1
+\end{pmatrix}
+$$
+witz sx, sy and sz the scaling factors along x, y and z.\\
+~\\
+Therefor, the matrix form of the transformations we used are expressed as follows:
+
+glTranslated(0,3,0);
+$$
+\begin{pmatrix}
+	1&	0& 	0&	0\\
+	0&	1&	0&	3\\
+	0&	0&	1&	0\\
+	0&	0&	0&	1
+\end{pmatrix}$$
+glRotated(30,0,1,0);
+$$\begin{pmatrix}
+	cos(30)&	0& 	sin(30)&	0\\
+	0&	        1&	0&	        0\\
+	-sin(30)&	0&	cos(30)&	0\\
+	0&	        0&	0&	        1\\
+\end{pmatrix}$$
+
+glScaled(2,2,2);
+$$\begin{pmatrix}
+	2&	0& 	0&	0\\
+	0&	2&	0&	0\\
+	0&	0&	2&	0\\
+	0&	0&	0&	1\\
+\end{pmatrix}$$
+
+the final modelview matrix is the multiplication of the three previous matrices.
+
 \image{Week01/Part7.png}{Output image of Part 7.}{0.5}{img:p5}
 
 \section{Part 8}
 
-\image{Week01/Part8.png}{Output image of Part 8.}{0.5}{img:p5}
+\image{Week01/Part8a.png}{Front perspective view.}{0.5}{img:p5}
+\image{Week01/Part8.png}{X perspective view.}{0.5}{img:p5}
 
