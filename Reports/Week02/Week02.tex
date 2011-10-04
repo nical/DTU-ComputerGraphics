@@ -28,4 +28,17 @@ The same Transformation can be achieved by only composing with the following rot
 
 %\image{Week02/Part3.png}{Output image of Part 3.}{0.5}{img:w2p3}
 
-TODO
+The general expression of a \textit{lookat} modelview matrix can be written as follows:
+
+$$\begin{pmatrix}
+ 	X_x&		Y_x&           	Z_x&          	0\\
+	 X_y&       Y_y&           	Z_y&          	0\\
+	 X_z&       Y_z&           	Z_z&          	0\\
+	-dot(X, eye)&  -dot(Y, eye)&  	-dot(Z, eye)&  	1\\
+\end{pmatrix}$$
+With X, Y and Z the following vectors:\\
+Z = normalized(At - Eye)\\
+X = normalized(cross(Up, zaxis))\\
+Y = cross(Z, X)\\
+Using dot() and cross() to denote the dot product and cross product of two vectors,
+and normalized() the expression of the normalized vector (or unit vector) of a given vector.

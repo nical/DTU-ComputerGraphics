@@ -17,20 +17,44 @@ TODO: 2nd ambiant component ??
 \section{Part 2}
 
 \section{Part 3}
-The distance between the eye and the object is not taken into account by the phong
-equation - only the direction is - therefore, puting the eye at infinity does not
-change the lighting of the object.\\
-The vew vector - vector between the eye and the object, thus dependent on the
-eye position - influences the specular component.\\
-The object will not get illuminated - except for ambiant - by the light source if the later is placed at
-infinity, because the equation includes an attenuation term accounting for the
-distance between the objetc and the light source.\\
-Binding the light source to the eye point results illumination only dependent on
-the viewer, with the most illuminated parts being the one with normals directed
-toward the viewer. For instance turning around a sphere would give the same
-result whichever direction the viewer is looking the sphere from.\\
-Directional lights correspond to point lights placed at infinity without attenuation
-term. This kind of light are generally used to simulate the effect of powerful
-and very distant light sources like the sun.\\
-
+\begin{itemize}
+    \item The distance between the eye and the object is not taken into account by the phong
+    equation - only the direction is - therefore, puting the eye at infinity does not
+    change the lighting of the object.
+    \item The vew vector - vector between the eye and the object, thus dependent on the
+    eye position - influences the specular component.
+    The object will not get illuminated - except for ambiant - by the light source if the later is placed at
+    infinity, because the equation includes an attenuation term accounting for the
+    distance between the objetc and the light source.
+    \item Binding the light source to the eye point results illumination only dependent on
+    the viewer, with the most illuminated parts being the one with normals directed
+    toward the viewer. For instance turning around a sphere would give the same
+    result whichever direction the viewer is looking the sphere from.
+    \item Directional lights correspond to point lights placed at infinity without attenuation
+    term. This kind of light are generally used to simulate the effect of powerful
+    and very distant light sources like the sun.
+\end{itemize}
 \section{Part 4}
+
+
+\begin{itemize}
+    \item Flat shading renders each polygon of an object a single color, using
+    the one of the first vertex of the polygon.
+    \item Gouraud shading offers a smoother result as it computes the lighting of
+    every vertex and interpolates the values across the polygon.
+    \item Phong shading samples the amount of light of the object at several points
+    within the polygon, giving more precise results than gouraud shading.
+\end{itemize}
+There's of course a tradeof between realism and computation time, that must be taken
+into account when shoosing between these techniques (at least in low end hardware
+like mobile devices as desktop graphics use more and more complex per-pixel deffered
+shading technics).\\
+Among the three methods mentionned above, phong shading is the best to render highlights
+because highlights are mostly small areas where the amount of light is intense,
+therefore the sampling density counts. Gouraud shading can miss small highlight
+positionned between two vertice, whereas Phong samples the quantity of light between
+vertice. \\
+Specular reflections depend on the position of the eye so yes, the shading
+depends also on the position on the screen if the position on the screen influences
+the direction of the vector coming from the eye to the object (I am not sure I understood the question though).
+
