@@ -28,7 +28,7 @@ void init (void)
 {
 	glClearColor (1.,1.,1.,1.);
 	glShadeModel (GL_FLAT);
-	glEnable (GL_DEPTH_TEST);
+	//glEnable (GL_DEPTH_TEST);
 }
 
 void display (void)

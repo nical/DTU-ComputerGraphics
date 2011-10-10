@@ -1,7 +1,9 @@
 /*02561-05-01 */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
+#include <float.h>
 #include <GL/glut.h>
 
 void init (void);
@@ -17,6 +19,7 @@ int main (int argc, char** argv)
 
 	glutCreateWindow ("Shadows 001");
 
+  printf ("%f\n", FLT_MAX);
 	init (); 
 	glutDisplayFunc (display);
 	glutReshapeFunc (reshape);
@@ -81,13 +84,22 @@ void display (void)
     0, 1, 0, 4
   };
 
+  GLfloat lightDir[] = {
+    0, 1, 0, 0
+  };
+
   GLfloat lightPos[] = {
-    -10, 10, 0, 1
+    0, 100000000000000, 0, 1
   };
 
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glLightfv (GL_LIGHT0, GL_POSITION, lightPos);
+  glLightfv (GL_LIGHT0, GL_POSITION, lightDir);
+  glBegin (GL_LINES);
+    glColor4f (0, 1, 0, 1);
+    glVertex3f (0, 10, 0);
+    glVertex3f (0, 5, 0);
+  glEnd();
   
   /*glPushMatrix();
   glTranslatef(0, 7, 0);

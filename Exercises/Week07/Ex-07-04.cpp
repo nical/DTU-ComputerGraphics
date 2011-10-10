@@ -4,9 +4,14 @@
 #include <math.h>
 #include <GL/glut.h>
 
+#define EDGE 3.0
+
 void init (void);
 void display (void);
 void reshape (int w, int h);
+void processSpecialKeys(int key, int xx, int yy);
+
+float cam_x, cam_y, cam_z;
 
 int main (int argc, char** argv)
 {
@@ -15,13 +20,37 @@ int main (int argc, char** argv)
 	glutInitWindowSize (500,500);
 	glutInitWindowPosition (100,100);
 
-	glutCreateWindow ("Shadows 001");
+	glutCreateWindow ("Shadows 002");
+  cam_x = 10;
+  cam_y = 10;
+  cam_z = 5;
 
 	init (); 
+  glutSpecialFunc(processSpecialKeys);
 	glutDisplayFunc (display);
 	glutReshapeFunc (reshape);
 	glutMainLoop ();
 
+}
+
+void processSpecialKeys(int key, int xx, int yy) {
+
+	float fraction = 0.1f;
+
+	switch (key) {
+		case GLUT_KEY_LEFT :
+			cam_x -= 1;
+			break;
+		case GLUT_KEY_RIGHT :
+			cam_x += 1;
+      break;
+		case GLUT_KEY_UP :
+			cam_y += 1;
+			break;
+		case GLUT_KEY_DOWN :
+			cam_y -= 1;
+			break;
+	}
 }
 
 void init (void)
@@ -71,18 +100,18 @@ void myShadowMatrix(float ground[4], float light[4]) {
 void display (void)
 {
   GLfloat quad[][3] = {
-    -2.5, 2.5, -2.5,
-    -2.5, 2.5, 2.5,
-    2.5, 2.5, 2.5,
-    2.5, 2.5, -2.5
+    3, 0, 3,
+    3, 0, 0,
+    3, 3, 0,
+    3, 3, 3
   };
 
   GLfloat plane[] = {
-    0, 1, 0, 4
+    1, 0, 0, 1
   };
 
   GLfloat lightPos[] = {
-    -10, 10, 0, 1
+    10, 2, 0, 1
   };
 
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -102,51 +131,49 @@ void display (void)
     glColor4f (1, 0, 0, 1);
     
     glVertex3f (0, 0, 0);
-    glVertex3f (5, 0, 0);
+    glVertex3f (10, 0, 0);
 
     glColor4f (0, 1, 0, 1);
     glVertex3f (0, 0, 0);
-    glVertex3f (0, 5, 0);
+    glVertex3f (0, 10, 0);
 
     glColor4f (0, 0, 1, 1);
     glVertex3f (0, 0, 0);
-    glVertex3f (0, 0, 5);
+    glVertex3f (0, 0, 10);
 
   glEnd();
 
+  glPushMatrix();
+
+  glTranslatef (EDGE/2., EDGE/2., EDGE/2.);
   glColor4f (1, 0, 0, 1);
 
-	glBegin (GL_POLYGON);
+  glutSolidCube(EDGE);
 
-	  glVertex3fv (quad[0]);
-	  glVertex3fv (quad[1]);
-	  glVertex3fv (quad[2]);
-	  glVertex3fv (quad[3]);
-	
-  glEnd ();
+  glPopMatrix();
 
   glDisable (GL_LIGHT0);
 
   glBegin(GL_LINES);
     glColor3f (0, 1, 0);
 
-    glVertex3f (10, -4, 10);
-    glVertex3f (10, -4, -10);
+    glVertex3f (-4, 10, 10);
+    glVertex3f (-4, 10, -10);
 
-    glVertex3f (10, -4, -10);
-    glVertex3f (-10, -4, -10);
+    glVertex3f (-4, 10, -10);
+    glVertex3f (-4, -10, -10);
     
-    glVertex3f (-10, -4, -10);
-    glVertex3f (-10, -4, 10);
+    glVertex3f (-4, -10, -10);
+    glVertex3f (-4, -10, 10);
     
-    glVertex3f (-10, -4, 10);
-    glVertex3f (10, -4, 10);
+    glVertex3f (-4, -10, 10);
+    glVertex3f (-4, 10, 10);
     
-    glVertex3f (-10, -4, -10);
-    glVertex3f (10, -4, 10);
+    glVertex3f (-4, -10, -10);
+    glVertex3f (-4, 10, 10);
     
-    glVertex3f (10, -4, -10);
-    glVertex3f (-10, -4, 10);
+    glVertex3f (-4, 10, -10);
+    glVertex3f (-4, -10, 10);
   glEnd();
 
   glEnable(GL_LIGHT0);
@@ -156,17 +183,20 @@ void display (void)
   myShadowMatrix(plane, lightPos);
 
   glDisable(GL_LIGHT0);
-  
+ 
+  glTranslatef (EDGE/2., EDGE/2., EDGE/2.);
   glColor4f (0.4, 0.4, 0.4, 1);
+  
+  glutSolidCube(EDGE);
 
-	glBegin (GL_POLYGON);
+	/*glBegin (GL_POLYGON);
 
 	  glVertex3fv (quad[0]);
 	  glVertex3fv (quad[1]);
 	  glVertex3fv (quad[2]);
 	  glVertex3fv (quad[3]);
 	
-  glEnd ();
+  glEnd ();*/
 
   glPopMatrix();
 
@@ -187,6 +217,6 @@ void reshape (int w, int h)
   /*  The camera is positioned in [20, 10, 0] and is pointing toward [0,
    *  10, 0], while the up vector is toward [0, 0, 1]
    */
-  gluLookAt (10., 10., 5., 0., 0., 0., 0., 1., 0.);
+  gluLookAt (cam_x, cam_y, cam_z, 0., 0., 0., 0., 1., 0.);
 
 }
