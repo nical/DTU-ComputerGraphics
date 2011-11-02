@@ -1,0 +1,28 @@
+\chapter{Weeks 08 and 09}
+
+  \section{Week 08}
+
+    After implementing the requested functions we had the result shown in
+    image \ref{img:Week08}. The requested code can be seen in listing
+    \ref{lst:0809}
+
+    \image{Week08-09/teapot_shadow.png}{Teapot Shadowmapping}{0.5}{img:Week08}
+  \section{Week 09}
+
+    We implemented the reflections of the teapot on the plane quad, as seen in figure \ref{img:AllRef} and
+    \ref{img:AllRef2}.
+    Do to this we had to invert the winding rule for the triangles, because in the process
+    of drawing the reflection we need to invert the coordinates along the Y axis, which
+    changes the winding order of the triangles and due to the backface culling we would have
+    seen the backfaces of the mesh instead of the front ones in the reflection. Another solution
+    would have been to disable the backface culling, but this would have ment to loose an
+    optimisation.
+
+    %TODO part3
+
+    \image{Week08-09/teapot_shadow_reflection.png}{Shadowmapping and Reflection}{0.5}{img:AllRef}
+    \image{Week08-09/teapot_shadow_reflection2.png}{Shadowmapping and Reflection with plane intersection}{0.5}{img:AllRef2}
+
+  \section{The Code}
+
+    \fcode{../Exercises/Week08/hwshade.cpp}{C++}{hwshade.cpp}{lst:0809}

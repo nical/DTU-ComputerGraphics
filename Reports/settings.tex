@@ -47,6 +47,14 @@
     \end{figure}%
 }
 
+\newcommand{\fcode}[4]{%
+    \parbox{\textwidth}{%
+      \centering%
+      \emph{#3}%
+      \label{#4}%
+    }%
+    \lstinputlisting[language=#2]{#1}%
+}
 
 \newcommand{\Eqn}[1]{Equation~(\ref{#1})}
 \newcommand{\Abs}[1]{\left|\:#1\:\right|}
