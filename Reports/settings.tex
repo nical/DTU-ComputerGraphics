@@ -1,6 +1,7 @@
 \usepackage{braket}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{float}
 %\usepackage{a4}
 
 
@@ -38,7 +39,7 @@
 %       width
 %       label
 \newcommand{\image}[4]{%
-    \begin{figure}[hbt]%
+    \begin{figure}[!h]%
     \centering%
     \includegraphics[width=#3\columnwidth]{#1}%
     \caption{\emph{#2}}%
