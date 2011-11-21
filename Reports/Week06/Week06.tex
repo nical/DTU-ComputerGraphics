@@ -1,0 +1,30 @@
+\chapter{Week 6 - Vertex and fragment shaders}
+
+We used a simple scene with a rotating cube available in campusnet (02561-06-00.2011.zip)
+as it provides a simple mesh as well as shader initialization out of the box.
+
+Gauraud shading computed in the vertex shader is rendered as seen in figure \ref{gouraud}.
+
+Per vertex shading is not perfect on a cube mesh, because the latter has a very low
+tesselation so small details such as the highlight are missed most of the time.
+
+The result can be improved however, by computing the highlight in the fragment shader.
+We implemented Phong shading by keeping the ambient and diffuse computation in the
+vertex shader and computing only the specular term in the fragment shader. The result
+can be seen in figure \ref{phong}.
+
+We also added texturing to the shader as shown in figure \ref{textured}. This required
+to add a texture sampler uniform and texture coordinates vertex attributes in the C++
+code.   
+
+\image{Week06/Gouraud.png}{Gauraud shading (per vertex lighting).}{0.5}{gouraud}
+\image{Week06/Phong.png}{Phong shading (per fragment lighting).}{0.5}{phong}
+\image{Week06/Textured.png}{Textured cube (with specular highlight).}{0.5}{textured}
+
+The sources of the shader for Phong shading and Texture mapping are in figure \ref{vs} and \ref{fs}.
+There is only one line to change in the fragment shader to switch between the two.
+Normally it should have been done in two different files so as to avoid useless
+computations and inputs, but it is easier to present this and avoids long code listings.
+
+\fcode{Week06/Phong.vert}{java}{Vertex Shader for phong and Texture shading}{vs}
+\fcode{Week06/Phong.frag}{java}{Fragment Shader for phong and Texture shading}{fs}

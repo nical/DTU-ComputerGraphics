@@ -32,9 +32,7 @@
     atomic, norace, command, event, error_t, signal, call, task, post,
     configuration, implementation, components, as, module, interface,
     uses, provides, bro_bt_device_t, bdaddr_t, scicos_block}
-}
-
-% args: image path
+}% args: image path
 %       caption
 %       width
 %       label
@@ -48,12 +46,14 @@
 }
 
 \newcommand{\fcode}[4]{%
+    \begin{figure}[!h]%
     \parbox{\textwidth}{%
       \centering%
       \emph{#3}%
       \label{#4}%
     }%
     \lstinputlisting[language=#2]{#1}%
+    \end{figure}
 }
 
 \newcommand{\Eqn}[1]{Equation~(\ref{#1})}
