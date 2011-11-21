@@ -1,4 +1,4 @@
-\chapter{Week 5}
+\chapter{Week 5 - Texture mapping}
 
 \section{Part 1}
   The difference between activating or not the \emph{Depth Test} is shown in Images \ref{img:01-01}
@@ -49,125 +49,52 @@ glEnd();
 
 This gives the following result:
 
-\image{Week01/Part2.png}{Output image of Part 2.}{0.5}{img:p2}
+\image{Week05/Ex_02_-_Clipping.png}{Output image of Part 2.}{0.5}{img:p52}
 
 
-%\section{Part 3}
+\section{Part 3}
 
+Playing with the filtering techniques we obtain the results in figures
+\ref{img:p531},\ref{img:p532},\ref{img:p533},\ref{img:p534},\ref{img:p535} and \ref{img:p536}. 
 
+\image{Week05/Ex_03_-_Linear.png}{Linear sampling without mipmaps.}{0.5}{img:p531}
+\image{Week05/Ex_03_-_Linear_with_Linear_Mipmaps.png}{Linear sampling with mipmaps.}{0.5}{img:p532}
+\image{Week05/Ex_03_-_Linear_with_Nearest_Mipmaps.png}{Linear sampling with nearest mipmaps.}{0.5}{img:p533}
+\image{Week05/Ex_03_-_Nearest.png}{Nearest sampling without mipmaps.}{0.5}{img:p534}
+\image{Week05/Ex_03_-_Nearest_with_Linear_Mipmaps.png}{Nearest sampling with linear mipmaps.}{0.5}{img:p535}
+\image{Week05/Ex_03_-_Nearest_with_Nearest_Mipmaps.png}{Nearest sampling with nearest mipmaps.}{0.5}{img:p536}
 
-%\section{Part 4}
+Nearest sampling simply takes the colour of the learest texel in the texure, without accounting
+for the surrounding texel. This method is fast but produces some alisaing, especially
+when the triangle is not facing the viewer. This sampling method can show some noisy
+artifacts when the size of the texels are smaller than the one of the pixels on the
+screen, because some of them are just missed.
+Linear sampling, however, uses linear interpolation between the closest four closest
+texels, which produces smoother results. When upscaling and downscaling the result is
+blured a bit.
 
+Mipmaping is used to precompute downscaled versions of the texture in order to
+optimize speed and reduce aliasing.
+Speed optimization comes from the fact that linear sampling has less fragments to
+sample when the triangle is far away (down scaling). Aliasing is reduced because
+the precomputation can use better scaling methods since it does not have to be
+computed all the time. 
+
+\section{Part 4}
+
+\image{Week05/Ex_04_-_Direct_Map.png}{ Direct mapping. No fragment is sampled outside the texture's range.}{0.5}{img:p541}
+\image{Week05/Ex_04_-_Bidirectional_Clamp.png}{Bidirectional clamping. The texture borders of the texture are stretched when sampling out of the texture range.}{0.5}{img:p542}
+\image{Week05/Ex_04_-_S_Repeat.png}{Repeated texture along S.}{0.5}{img:p543}
+\image{Week05/Ex_04_-_T_Repeat.png}{Repeated texture along T.}{0.5}{img:p544}
+\image{Week05/Ex_04_-_Repeated_Texture_1-10.png}{Repeated texture (in both dimensions).}{0.5}{img:p545}
 
 \section{Part 5}
 
-%\image{Week01/Part05.png}{Output image of Part 5.}{0.5}{img:p5} WTF ?!
+\image{Week05/Ex_05_-_Rotated_Texture.png}{Texture rotated by 45°.}{0.5}{img:p551}
+\image{Week05/Ex_05_-_Rotated_and_scaled_down_on_X_axis.png}{Texture rotated 45° and scaled in one direction.}{0.5}{img:p552}
+\image{Week05/Ex_05_-_Rotated_and_scaled_175_on_both_axis.png}{Texture rotated 45° and scaled in both directions.}{0.5}{img:p553}
+
 
 \section{Part 6}
 
-
-Given a viewport defined by the coordinates $[x_{w1},x_{w2},y_{w1},y_{w2}]$ and $[x_{v1},x_{v2},y_{v1},y_{v2}]$,
-the matrix mapping a point $(x_{w},y_{w})$ to the point $(x_{v},y_{v})$
- is:
-
-
-$$
-\begin{pmatrix}
-    A& 0& 0& tx \\
-    0& B& 0& ty \\
-    0& 0& 0& 0 \\
-    0& 0& 0& 1 \\
-\end{pmatrix}
-$$
-
-With the scaling components\\
-\begin{align*}
-    A &= \frac{1}{sx} = \frac{1}{(x_{min}-x_{u2})/(x_{v1}-x_{v2})} \\
-    B &= \frac{1}{sy} = \frac{1}{(y_{min}-y_{u2})/(y_{v1}-y_{v2})}
-\end{align*}
-And the translation components\\
-\begin{align*}
-   t_x &= x_{v1}-x_{u2} \\
-   t_y &= y_{v1}-y_{u2} 
-\end{align*}
-
-\section{Part 7}
-The required transformations have been implemented in the function display below:
-\begin{lstlisting}[caption=Snapshot from Part7.cpp]
-void display (void) {
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glColor3f (1.,1.,1.);
-    // tansformation
-    glTranslated(0,3,0);
-    glRotated(30,0,1,0);
-    glScaled(2,2,2);
-    // draw the cube
-    glutWireCube (1.);
-    // draw the axis 
-    glLoadIdentity();
-    axis();
-    glFlush ();
-}
-\end{lstlisting}
-
-A translation matrix can is expressed as follows:
-$$
-\begin{pmatrix}
-	1&	0& 	0&	tx\\
-	0&	1&	0&	ty\\
-	0&	0&	1&	tz\\
-	0&	0&	0&	1
-\end{pmatrix}
-$$
-A rotation around y is:
-$$
-\begin{pmatrix}
-	cos(\theta)&	0& 	sin(\theta)&	0\\
-	0&	        1&	0&	        0\\
-	-sin(\theta)&	0&	cos(\theta)&	0\\
-	0&	        0&	0&	        1\\
-\end{pmatrix}
-$$
-And a scale is written as:
-$$
-\begin{pmatrix}
-	sx	0 	0	0
-	0	sy	0	0
-	0	0	sz	0
-	0	0	0	1
-\end{pmatrix}
-$$
-witz sx, sy and sz the scaling factors along x, y and z.\\
-~\\
-Therefor, the matrix form of the transformations we used are expressed as follows:
-
-glTranslated(0,3,0);
-$$
-\begin{pmatrix}
-	1&	0& 	0&	0\\
-	0&	1&	0&	3\\
-	0&	0&	1&	0\\
-	0&	0&	0&	1
-\end{pmatrix}$$
-glRotated(30,0,1,0);
-$$\begin{pmatrix}
-	cos(30)&	0& 	sin(30)&	0\\
-	0&	        1&	0&	        0\\
-	-sin(30)&	0&	cos(30)&	0\\
-	0&	        0&	0&	        1\\
-\end{pmatrix}$$
-
-glScaled(2,2,2);
-$$\begin{pmatrix}
-	2&	0& 	0&	0\\
-	0&	2&	0&	0\\
-	0&	0&	2&	0\\
-	0&	0&	0&	1\\
-\end{pmatrix}$$
-
-the final modelview matrix is the multiplication of the three previous matrices.
-
-
-\section{Part 8}
-
-% TODO images or something ??
+\image{Week05/Ex_06_-_SRS_Texture_Mapping.png}{Using an image from disk as texture}{0.5}{img:p561}
