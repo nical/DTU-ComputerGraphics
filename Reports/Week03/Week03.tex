@@ -14,7 +14,10 @@ light emittance from an object. It obviously will not emit light on surrounding 
 
 \section{Part 2}
 
-Setting the diffuse material term equal to 0,0,0 results in a completely dark object (black body). 
+Setting the diffuse material term equal to 0,0,0 results in a completely dark object (black body).\\ 
+Setting the specular material term equal to 0,0,0 results in an object that only has the diffuse component. In figure \ref{img:w3p2} all the spheres except for the ones in the fourth column and the second to fifth row of the third column, have a specular term equal to 0,0,0\\
+Increasing the shininess value actually decreases the strenght of the highlight.  
+
 \image{Week03/spheres.png}{Spheres rendered using different shading parameters.}{0.5}{img:w3p2} 
 
 \section{Part 3}
@@ -48,7 +51,7 @@ Setting the diffuse material term equal to 0,0,0 results in a completely dark ob
 \end{itemize}
 There's of course a tradeof between realism and computation time, that must be taken
 into account when shoosing between these techniques (at least in low end hardware
-like mobile devices as desktop graphics use more and more complex per-pixel deffered
+like mobile devices, since desktop graphics use more and more complex per-pixel deffered
 shading technics).\\
 Among the three methods mentionned above, phong shading is the best to render highlights
 because highlights are mostly small areas where the amount of light is intense,
