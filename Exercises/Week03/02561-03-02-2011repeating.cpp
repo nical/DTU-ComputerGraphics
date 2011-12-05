@@ -6,7 +6,9 @@
  */
 
 #include <stdlib.h>
-#include <gl/glut.h>
+#include <GL/glut.h>
+
+#define SLICES 64
 
 /*  Initialize z-buffer, projection matrix, light source, 
  *  and lighting model.  Do not specify a material property here.
@@ -53,7 +55,7 @@ void myinit(void)
 
 void display(void)
 {
-    GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
+    /*GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
     GLfloat mat_ambient_color[] = { 0.8, 0.8, 0.2, 1.0 };
     GLfloat mat_diffuse[] = { 0.1, 0.5, 0.8, 1.0 };
@@ -61,272 +63,101 @@ void display(void)
     GLfloat no_shininess[] = { 0.0 };
     GLfloat low_shininess[] = { 5.0 };
     GLfloat high_shininess[] = { 100.0 };
-    GLfloat mat_emission[] = {0.3, 0.2, 0.2, 0.0};
+    GLfloat mat_emission[] = {0.3, 0.2, 0.2, 0.0};*/
+
+    GLfloat shininess[] = {
+      0.0, 25.0, 50.0, 75.0, 100.0
+    };
+
+    GLfloat emission[][4] = {
+      {0.0, 0.0, 0.0, 1.0},
+      {1.0, 0.0, 0.0, 1.0},
+      {0.0, 1.0, 0.0, 1.0},
+      {0.0, 0.0, 1.0, 1.0},
+      {0.5, 0.5, 0.5, 0.5}
+    };
+
+    GLfloat ambient[][4] = {
+      {0.0, 0.0, 0.0, 1.0},
+      {1.0, 0.0, 0.0, 1.0},
+      {0.0, 1.0, 0.0, 1.0},
+      {0.0, 0.0, 1.0, 1.0},
+      {0.5, 0.5, 0.5, 0.5}
+    };
+    
+    GLfloat diffuse[][4] = {
+      {0.0, 0.0, 0.0, 1.0},
+      {1.0, 0.0, 0.0, 1.0},
+      {0.0, 1.0, 0.0, 1.0},
+      {0.0, 0.0, 1.0, 1.0},
+      {0.5, 0.5, 0.5, 0.5}
+    };
+    
+    GLfloat specular[][4] = {
+      {0.0, 0.0, 0.0, 1.0},
+      {1.0, 0.0, 0.0, 1.0},
+      {0.0, 1.0, 0.0, 1.0},
+      {0.0, 0.0, 1.0, 1.0},
+      {0.5, 0.5, 0.5, 0.5}
+    };
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-/*  draw sphere in first row, first column
- *  diffuse reflection only; no ambient or specular  
- */
-    glPushMatrix();
-    glTranslatef (-3.75, 3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
+    GLint i, j;
 
-/*  draw sphere in first row, second column
- *  diffuse and specular reflection; low shininess; no ambient
- */
-    glPushMatrix();
-    glTranslatef (-1.25, 3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
+    for (i = 0; i < 5; i++){
+      
 
-/*  draw sphere in first row, third column
- *  diffuse and specular reflection; high shininess; no ambient
- */
-    glPushMatrix();
-    glTranslatef (1.25, 3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient_color);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in first row, fourth column
- *  diffuse reflection; emission; no ambient or specular reflection
- */
-    glPushMatrix();
-    glTranslatef (3.75, 3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-	/*  draw sphere in first row, fifth column
- *  diffuse reflection; emission; no ambient or specular reflection
- */
-    glPushMatrix();
-    glTranslatef (6.25, 3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_specular);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-/*  draw sphere in second row, first column
- *  ambient and diffuse reflection; no specular  
- */
-    glPushMatrix();
-    glTranslatef (-3.75, 0.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_emission);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in second row, second column
- *  ambient, diffuse and specular reflection; low shininess
- */
-    glPushMatrix();
-    glTranslatef (-1.25, 0.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in second row, third column
- *  ambient, diffuse and specular reflection; high shininess
- */
-    glPushMatrix();
-    glTranslatef (1.25, 0.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_ambient_color);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in second row, fourth column
- *  ambient and diffuse reflection; emission; no specular
- */
-    glPushMatrix();
-    glTranslatef (3.75, 0.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-	/*  draw sphere in second row, fifth column
- *  ambient and diffuse reflection; emission; no specular
- */
-    glPushMatrix();
-    glTranslatef (6.25, 0.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_emission);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in third row, first column
- *  colored ambient and diffuse reflection; no specular  
- */
-    glPushMatrix();
-    glTranslatef (-3.75, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in third row, second column
- *  colored ambient, diffuse and specular reflection; low shininess
- */
-    glPushMatrix();
-    glTranslatef (-1.25, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in third row, third column
- *  colored ambient, diffuse and specular reflection; high shininess
- */
-    glPushMatrix();
-    glTranslatef (1.25, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in third row, fourth column
- *  colored ambient and diffuse reflection; emission; no specular
- */
-    glPushMatrix();
-    glTranslatef (3.75, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-	/*  draw sphere in third row, fifth column
- *  colored ambient and diffuse reflection; emission; no specular
- */
-    glPushMatrix();
-    glTranslatef (6.25, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_emission);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-    glFlush();
-
-
-/*  draw sphere in fourth row, first column
- *  colored ambient and diffuse reflection; no specular  
- */
-    glPushMatrix();
-    glTranslatef (-3.75, -6.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in fourth row, second column
- *  colored ambient, diffuse and specular reflection; low shininess
- */
-    glPushMatrix();
-    glTranslatef (-1.25, -6.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in third row, third column
- *  colored ambient, diffuse and specular reflection; high shininess
- */
-    glPushMatrix();
-    glTranslatef (1.25, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-/*  draw sphere in third row, fourth column
- *  colored ambient and diffuse reflection; emission; no specular
- */
-    glPushMatrix();
-    glTranslatef (3.75, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
-	/*  draw sphere in third row, fifth column
- *  colored ambient and diffuse reflection; emission; no specular
- */
-    glPushMatrix();
-    glTranslatef (6.25, -3.0, 0.0);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_emission);
-    glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-    glutSolidSphere(1.0, 16, 16);
-    glPopMatrix();
-
+        glPushMatrix();
+        glTranslatef (-3.75, (2 - i) * 3.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient[i]);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse[4]);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specular[0]);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emission[0]);
+        glutSolidSphere(1.0, SLICES, SLICES);
+        glPopMatrix();
+        
+        glPushMatrix();
+        glTranslatef (-1.25, (2 - i) * 3.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient[0]);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse[i]);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specular[0]);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emission[0]);
+        glutSolidSphere(1.0, SLICES, SLICES);
+        glPopMatrix();
+        
+        glPushMatrix();
+        glTranslatef (1.25, (2 - i) * 3.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient[0]);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse[4]);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specular[i]);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emission[0]);
+        glutSolidSphere(1.0, SLICES, SLICES);
+        glPopMatrix();
+        
+        glPushMatrix();
+        glTranslatef (3.75, (2 - i) * 3.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient[0]);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse[4]);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specular[4]);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess[i]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emission[0]);
+        glutSolidSphere(1.0, SLICES, SLICES);
+        glPopMatrix();     
+        
+        glPushMatrix();
+        glTranslatef (6.25, (2 - i) * 3.0, 0.0);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient[0]);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse[4]);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specular[0]);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess[0]);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emission[i]);
+        glutSolidSphere(1.0, SLICES, SLICES);
+        glPopMatrix();
+    }
     glFlush();
 }
 
