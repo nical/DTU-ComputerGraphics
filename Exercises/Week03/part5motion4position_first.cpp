@@ -46,21 +46,13 @@ void init(void)
 void display(void)
 {
    
-  GLfloat position[] = { 0.0, 1.5,0.0, 1.0 };
+   GLfloat position[] = { 0.0, 1.5,0.0, 1.0 };
 
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   //glPushMatrix ();
-   //glLoadIdentity();
-   //glTranslated (0.0, 1.5, 0.0);
-    //glColor3f (0.0, 1.0, 1.0);
-	//glDisable (GL_LIGHTING);
-	//gluLookAt (0.0, 0.0, 5.0 , 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-	//glutWireCube (0.1);  
-	glLoadIdentity();
-   /*if(MOTION==1 || MOTION==3 || MOTION==2)*/ gluLookAt (5.0* cos(eye_pos), 5.0*cos(eye_pos), 5.0*sin(eye_pos) , 0.0, 0.0, 0.0, 0.0, sin(eye_pos), -cos(eye_pos));
-   //else if(MOTION==4) gluLookAt (0.0, 5.0*cos(eye_pos), 5.0*sin(eye_pos) , 0.0, 0.0, 0.0, 0.0, sin(eye_pos), -cos(eye_pos));
-   //else gluLookAt (0.0, 0.0, 5.0 , 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-   //std::cout<<sin(eye_pos)<<std::endl;
+ 	 glLoadIdentity();
+   
+   gluLookAt (5.0* cos(eye_pos), 5.0*cos(eye_pos), 5.0*sin(eye_pos) , 0.0, 0.0, 0.0, 0.0, sin(eye_pos), -cos(eye_pos));
+   
    glPushMatrix ();
    
    glRotated ((GLdouble) spin, 1.0, 0.0, 0.0);
@@ -82,20 +74,14 @@ void display(void)
 
 void reshape (int w, int h)
 {
-   
-		GLfloat position[] = { 0.0, 1.5,0.0, 1.0 };
    glViewport (0, 0, (GLsizei) w, (GLsizei) h);
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity();
    gluPerspective(40.0, (GLfloat) w/(GLfloat) h, 1.0, 20.0);
-   //glRotated((GLdouble) eye_pos, 1.0, 0.0, 0.0);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
-    
-	   glLightfv (GL_LIGHT0, GL_POSITION, position);
 }
 
-/* ARGSUSED2 */
 void mouse(int button, int state, int x, int y)
 {
    switch (button) {
@@ -108,7 +94,6 @@ void mouse(int button, int state, int x, int y)
 	  case GLUT_RIGHT_BUTTON:
          if (state == GLUT_DOWN) {
             eye_pos = (eye_pos + 0.2);
-		//	glFlush();
             glutPostRedisplay();
          }
          break;
@@ -117,7 +102,6 @@ void mouse(int button, int state, int x, int y)
    }
 }
 
-/* ARGSUSED1 */
 void keyboard(unsigned char key, int x, int y)
 {
    switch (key) {
