@@ -1,5 +1,3 @@
-/* pick.c    */
-
 /* E. Angel, Interactive Computer Graphics */
 /* A Top-Down Approach with OpenGL, Third Edition */
 /* Addison-Wesley Longman, 2003 */
@@ -7,7 +5,6 @@
 /* demonstrates picking used selection mode */
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <vector>
 #include <GL/glut.h>
 
@@ -81,31 +78,11 @@ static float zoom = 1.0;
 
 void draw_capacitor(void)
 {
-    
     glBegin(GL_LINES);
-    glVertex2f(-1, 0.);
-    glVertex2f(-0.1, 0.);
-    glVertex2f(-0.1, -1.);
-    glVertex2f(-0.1, 1.);
-    glVertex2f(1, 0.);
-    glVertex2f(0.1, 0.);
-    glVertex2f(0.1, -1.);
-    glVertex2f(0.1, 1.);
-    glEnd();
-}
-
-void draw_resistor(void)
-{
-    
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(-1, 0.);
-    glVertex2f(-0.8, 0.);
-    glVertex2f(-0.5, 1.);
-    glVertex2f(-0.2, -1.);
-    glVertex2f(0.1, 1.);
-    glVertex2f(0.4, -1.);
-    glVertex2f(0.7,0.);
-    glVertex2f(1.0, 0.);
+    glVertex2f(0.1, -1.);   glVertex2f(0.1, 1.);
+    glVertex2f(-1, 0.);     glVertex2f(-0.1, 0.);
+    glVertex2f(-0.1, -1.);  glVertex2f(-0.1, 1.);
+    glVertex2f(1, 0.);      glVertex2f(0.1, 0.);
     glEnd();
 }
 
@@ -120,22 +97,31 @@ void draw_transistor(void)
 
     glEnd();
 
+  
     glBegin(GL_LINES);
-    glVertex2f(-1.0, 0.);
-    glVertex2f(-0.2, 0.);
-    glVertex2f(0.1, 1.);
-    glVertex2f(0.1, 0.3);
-    glVertex2f(0.1, -1.);
-    glVertex2f(0.1, -0.3);
 
-    glVertex2f(-0.2, -0.5);
-    glVertex2f(-0.2, 0.5);
+    glVertex2f(0.1, 0.3);    glVertex2f(-0.2, 0.2);
+    glVertex2f(0.1, -0.3);   glVertex2f(-0.2, -0.2);
+    glVertex2f(-0.2, -0.5);  glVertex2f(-0.2, 0.5);
+    glVertex2f(-1.0, 0.);    glVertex2f(-0.2, 0.);
+    glVertex2f(0.1, 1.);     glVertex2f(0.1, 0.3);
+    glVertex2f(0.1, -1.);    glVertex2f(0.1, -0.3);
+    
+    glEnd();
+}
 
-    glVertex2f(0.1, 0.3);
-    glVertex2f(-0.2, 0.2);
-    glVertex2f(0.1, -0.3);
-    glVertex2f(-0.2, -0.2);
-
+void draw_resistor(void)
+{
+    
+    glBegin(GL_LINE_STRIP);
+        glVertex2f(-1, 0.);
+        glVertex2f(-0.8, 0.);
+        glVertex2f(-0.5, 1.);
+        glVertex2f(-0.2, -1.);
+        glVertex2f(0.1, 1.);
+        glVertex2f(0.4, -1.);
+        glVertex2f(0.7,0.);
+        glVertex2f(1.0, 0.);
     glEnd();
 }
 
@@ -205,26 +191,23 @@ void erase_circuit( int idx )
     
 }
 
-void processHits (GLint hits, GLuint buffer[])
+void processHits( GLint hits, GLuint buffer[] )
 {
-   unsigned int i, j;
-   GLuint ii, jj, names, *ptr;
+    unsigned int i, j;
+    GLuint names, *ptr;
 
-   printf ("hits = %d\n", hits);
-   ptr = (GLuint *) buffer; 
-   for (i = 0; i < hits; i++) {
-      names = *ptr;
-	  printf("names: %i ...", names);
-	  ptr++;
-	  printf("z min= %d\n", *ptr);
-	  ptr+=2;
+    ptr = (GLuint *) buffer; 
+    for (i = 0; i < hits; i++)
+    {
+        names = *ptr;
+        ptr++;
+        ptr+=2;
 
-      for (j = 0; j < names; j++) {
-         printf("j: %i yp :%i | ", j,  circuits[*ptr].type);
-         ptr++;
-      }
-      printf ("\n");
-   }
+        for (j = 0; j < names; j++)
+        {
+            ptr++;
+        }
+    }
 }
 int get_id(int hits, GLuint buffer[], int &type)
 {
@@ -307,7 +290,6 @@ void mouse(int button, int state, int x, int y)
 	
 	glutPostRedisplay();
 } 
-
 
 void display(void)
 {
@@ -457,7 +439,7 @@ void menu(int c)
         }
     }
 
-    motion_wait = 20;// to avoid moving things when selecting menu items
+    motion_wait = 15;// to avoid moving things when selecting menu items
      
     glutPostRedisplay();
 }
