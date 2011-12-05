@@ -1,5 +1,3 @@
-/* pick.c    */
-
 /* E. Angel, Interactive Computer Graphics */
 /* A Top-Down Approach with OpenGL, Third Edition */
 /* Addison-Wesley Longman, 2003 */
