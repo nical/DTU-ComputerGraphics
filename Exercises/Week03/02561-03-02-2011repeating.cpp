@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 
-#define SLICES 64
+#define SLICES 128
 
 /*  Initialize z-buffer, projection matrix, light source, 
  *  and lighting model.  Do not specify a material property here.
