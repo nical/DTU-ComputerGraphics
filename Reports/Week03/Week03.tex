@@ -7,14 +7,15 @@ more importantly indirect lighting. In real life when sun rays enter a room, the
 bounce on walls, which provides lighting for parts that dont directly face the light
 sources. To emulate the effect of indirect lighting, OpenGL includes the ambient
 term in its lighting equation. What it does is basically apply a base colour to
-every vertice regardless of the orientaion of its normal. 
-~\\
-~\\
-TODO: 2nd ambiant component ??
-
-%\image{Week03/Part1.png}{Output image of Part 1.}{0.5}{img:w2p1}
+every vertice regardless of the orientaion of its normal. \\
+Having two different ambient components in the Phong equation means that it's possible to have a generic ambient lighting which
+is the same for every object and then a specific ambient term for each of these objects. This allows, for example, to emulate
+light emittance from an object. It obviously will not emit light on surrounding objects (unless we add a point light), but it is taken into account for this object's shading and it is used for instance, in order to make it look bright in dark scene. 
 
 \section{Part 2}
+
+Setting the diffuse material term equal to 0,0,0 results in a completely dark object (black body). 
+\image{Week03/spheres.png}{Spheres rendered using different shading parameters.}{0.5}{img:w3p2} 
 
 \section{Part 3}
 \begin{itemize}
@@ -54,7 +55,8 @@ because highlights are mostly small areas where the amount of light is intense,
 therefore the sampling density counts. Gouraud shading can miss small highlight
 positionned between two vertice, whereas Phong samples the quantity of light between
 vertice. \\
-Specular reflections depend on the position of the eye so yes, the shading
-depends also on the position on the screen if the position on the screen influences
-the direction of the vector coming from the eye to the object (I am not sure I understood the question though).
+Gouraud shading, as opposed to flat shading, is a matter of whether or not the color of the fragments
+are interpolated between vertices. This means that gouraud shading is not related to the orientation in the screen.
+However, a gouraud shaded polygon can be rendered using the phong model, and since specular reflections depend on 
+the position of the eye, in this case the shading actually depends also on the position on the screen.
 
