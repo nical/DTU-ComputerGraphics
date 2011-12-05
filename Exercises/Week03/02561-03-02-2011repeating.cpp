@@ -66,7 +66,7 @@ void display(void)
     GLfloat mat_emission[] = {0.3, 0.2, 0.2, 0.0};*/
 
     GLfloat shininess[] = {
-      0.0, 25.0, 50.0, 75.0, 100.0
+      100.0, 75.0, 50.0, 25.0, 0.0
     };
 
     GLfloat emission[][4] = {
@@ -133,7 +133,7 @@ void display(void)
         glMaterialfv(GL_FRONT, GL_AMBIENT, ambient[0]);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse[4]);
         glMaterialfv(GL_FRONT, GL_SPECULAR, specular[i]);
-        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess[0]);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess[3]);
         glMaterialfv(GL_FRONT, GL_EMISSION, emission[0]);
         glutSolidSphere(1.0, SLICES, SLICES);
         glPopMatrix();
