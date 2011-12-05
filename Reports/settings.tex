@@ -4,6 +4,7 @@
 \usepackage{float}
 %\usepackage{a4}
 
+\usepackage[margin=1.7in]{geometry}
 
 \usepackage{color}
 \definecolor{Brown}{cmyk}{0,0.81,1,0.60}
@@ -55,6 +56,17 @@
     \lstinputlisting[language=#2]{#1}%
     \end{figure}
 }
+
+\usepackage{eso-pic}
+\newcommand\BackgroundPic{
+    \put(0,0){
+    \parbox[b][\paperheight]{\paperwidth}{%
+    \vfill
+    %\centering
+    \includegraphics[width=\paperwidth,height=\paperheight,
+    keepaspectratio]{background.png}%
+    \vfill
+}}}
 
 \newcommand{\Eqn}[1]{Equation~(\ref{#1})}
 \newcommand{\Abs}[1]{\left|\:#1\:\right|}
