@@ -1,4 +1,19 @@
-\chapter{Week 3 - Transistors}
+\chapter{Week 4 - Transistors}
+
+\section{Part 1}
+The pick function in newpaint returns the id of the button clicked based on the position of the mouse and the dimensions of the buttons.
+
+\section{Part 2}
+
+Selection is a special mode in legacy OpenGL that allows to render the ids of objects in a buffer, instead of their color. This buffer can then be read on the cpu to see, for instance, if particular objects are occluded from a given point of view, or just to get the id of the nearest object for a given fragment. The depth for each fragment can also be retrieved.
+
+Picking is a technique that uses OpenGL's selection mechanism to generate a projection matrix that limit the view to a small area, in order to quickly render this area on a small buffer and retrieve the ids of the objects in this area. This is used in particular to sample the ids in a small region around the mouse.
+
+\section{Part 3}
+
+There is no observable differences between single and double buffering on our computers (Running Ubuntu 10.10), which may be because the window compositor enforces double buffering. On some configurations however, single buffering shows some shearing effect, with part of the sceen corresponding to a frame, and some other parts corresponding to the next frame.
+
+\section{Part 4}
 
 We implemented a simplific interface for the transistor exercise. All controls are operated through a right click menu, except for the \textit{drag and drop} function to move the circuits (which is done by moving the mouse while the left click is pressed).
 
