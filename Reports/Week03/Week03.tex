@@ -16,7 +16,8 @@ light emittance from an object. It obviously will not emit light on surrounding 
 
 Setting the diffuse material term equal to 0,0,0 results in a completely dark object (black body).\\ 
 Setting the specular material term equal to 0,0,0 results in an object that only has the diffuse component. In figure \ref{img:w3p2} all the spheres except for the ones in the fourth column and the second to fifth row of the third column, have a specular term equal to 0,0,0\\
-Increasing the shininess value actually decreases the strenght of the highlight.  
+Increasing the shininess value actually decreases the strenght of the highlight. In figure \ref{img:w3p2} the spheres in the fourth column show a 
+gradually decreasing shininess term from 100 to 0. 
 
 \image{Week03/spheres.png}{Spheres rendered using different shading parameters.}{0.5}{img:w3p2} 
 
@@ -62,4 +63,8 @@ Gouraud shading, as opposed to flat shading, is a matter of whether or not the c
 are interpolated between vertices. This means that gouraud shading is not related to the orientation in the screen.
 However, a gouraud shaded polygon can be rendered using the phong model, and since specular reflections depend on 
 the position of the eye, in this case the shading actually depends also on the position on the screen.
+
+\section{Part 5}
+
+\image{Week03/donut.png}{Screen capture of the animation of part5 (see Week03/Part5.cpp).}{0.5}{img:w3p5} 
 
