@@ -14,59 +14,71 @@
 #include <iostream>
 #include <math.h>
 
-//size of selection buffer
 #define BUFSIZE 64
+#define PI 3,14159265
 
-enum component_type
+using namespace std;
+
+enum { NOTHING, WIRE, CIRCUIT };
+
+enum circuit_selected_type
 {
-    capacitor,
-    resistor,
-    transistor
+    CAPACITOR,
+    RESISTOR,
+    TRANSISTOR
 };
 
-//#include <cmath>
-struct component_t
+struct Circuit
 {
-    component_t(int t=0, int x=0, int y=0) : type(t), tx(x), ty(y), rx(0), sx(15), sy(15) {}
+    Circuit(int t=0, int x=0, int y=0)
+    : type(t), x(x), y(y), rot(0), scale(15) {}
 
-    int type;        //type of component
-    int tx, ty;        //translation
-    int rx;            //rotation in degrees
-    float sx, sy;    //scale
+    int type;
+    int x;
+    int y;
+    int rot;         
+    float scale;
 };
 
-struct wire_t
+struct Wire
 {
-	wire_t(int start_x=0, int start_y=0, int end_x=10, int end_y=0): start_x(start_x), end_x(end_x), start_y(start_y), end_y(end_y) {}
+	Wire(int x1=0, int y1=0, int x2=10, int y2=0)
+    : x1(x1), x2(x2), y1(y1), y2(y2) {}
 	
-	int start_x, start_y, end_x, end_y;
+	int x1;
+    int y1;
+    int x2;
+    int y2;
+
+    void draw()
+    {
+        glBegin(GL_LINES);
+        glVertex3f(x1, y1, -1.0);
+        glVertex3f(x2, y2, -1.0);
+        glEnd();
+    }
 };
 
 static int width, height;
-static bool ctrl_down = false;
-static bool alt_down = false;
-static bool shift_down = false;
 
-static int mx = 0; //mouse position x
-static int my = 0; //mouse position y
-static float zoom=1.0;
-static int translation_x=0;
-static int translation_y=0;
-//list with current components
-static std::vector<component_t> components;
-static std::vector<wire_t> wires;
-
-//index of select components in above list, -1 means nothing is selected
+static std::vector<Circuit> circuits;
+static std::vector<Wire> wires;
 static int selected = -1;
-static int w_selected = -1;
-static int type=0; // clue what is selected, component or wire
-void draw_wire(const wire_t & w)
-{
-	glBegin(GL_LINES);
-	glVertex3f(w.start_x, w.start_y, -1.0);
-	glVertex3f(w.end_x, w.end_y, -1.0);
-	glEnd();
-}
+static int selected_type = 0;
+static int add_elt = NOTHING;
+static int next_circuit;
+
+static int motion_wait = 0;
+
+static int scroll_x=0;
+static int scroll_y=0;
+static int mouse_x = 0;
+static int mouse_y = 0;
+static float zoom = 1.0;
+
+
+
+
 void draw_capacitor(void)
 {
     
@@ -80,7 +92,6 @@ void draw_capacitor(void)
     glVertex2f(0.1, -1.);
     glVertex2f(0.1, 1.);
     glEnd();
-    //TODO: draw capacitor symbol
 }
 
 void draw_resistor(void)
@@ -96,7 +107,6 @@ void draw_resistor(void)
     glVertex2f(0.7,0.);
     glVertex2f(1.0, 0.);
     glEnd();
-    //TODO: draw resistor symbol
 }
 
 void draw_transistor(void)
@@ -127,52 +137,74 @@ void draw_transistor(void)
     glVertex2f(-0.2, -0.2);
 
     glEnd();
-    //TODO: draw transistor symbol
 }
 
-void draw_components(GLenum mode)
+void draw_circuits(GLenum mode)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glScalef(zoom, zoom, 1);
-	glTranslatef(translation_x, translation_y, 0.0);
-    //loop over components and draw them. Mode is either GL_RENDER or GL_SELECT
-	for(size_t i=0; i<wires.size(); i++)
+	glTranslatef(scroll_x, scroll_y, 0.0);
+
+    for(int i=0; i<wires.size(); ++i)
 	{
-		const wire_t & w = wires[i];
-		if(selected==i && type==1) glColor3f(1,0,0);
-		else glColor3f(0,0,0);
-		//glPushMatrix();
+        //cout << "w" << i << "/"<< wires.size() << endl;
+		if(selected==i && selected_type==1) glColor3f(0.0,1.0,0.0);
+		else glColor3f(0.0,0.0,0.0);
 		glLoadName(i);
-		draw_wire(w);
-		//glPopMatrix();
+		wires[i].draw();
 	}
 	if(mode==GL_SELECT) glPushName(1);
-    for (size_t i=0; i<components.size(); i++)
+    for (int i=0; i<circuits.size(); ++i)
     {
-        
-        const component_t& c = components[i];
+        //cout << "c" << i << "/" << circuits.size()<< endl;
+        const Circuit& c = circuits[i];
 
-        //draw selected component in different color
-        if (selected == i && type==0)
-            glColor3f(1,0,0);
+        // different color for selected circuit
+        if (selected == i && selected_type==0)
+            glColor3f(0.0,1.0,0.0);
         else
-            glColor3f(0,0,0);
+            glColor3f(0.0,0.0,0.0);
 
         glPushMatrix();
-        //glLoadIdentity();
-        glTranslatef(c.tx, c.ty, 0.);
-        glScalef(c.sx, c.sy, 0.);
-        glRotatef(c.rx, 0., 0., 1.);
+
+        glTranslatef(c.x, c.y, 0.);
+        glScalef(c.scale, c.scale, 0.);
+        glRotatef(c.rot, 0., 0., 1.);
 		if (mode==GL_SELECT) glLoadName((GLuint)(i));
-        if ( c.type == resistor) draw_resistor();
-        else if(c.type==capacitor) draw_capacitor();
-        else draw_transistor();
+
+        if ( c.type == RESISTOR) draw_resistor();
+        else if (c.type==CAPACITOR) draw_capacitor();
+        else if (c.type==TRANSISTOR) draw_transistor();
+        else cout << "wrong type!" <<endl;
+
         glPopMatrix();
-        //TODO: draw components using their individual translation, rotation,
-        //      and scale.
     }
 }
+
+void erase_circuit( int idx )
+{
+
+    cout << "selected type = " << selected_type << endl;
+    if (selected_type == 0)
+    {
+        if ( idx >= 0 && idx < circuits.size() );
+        {
+            circuits[idx] = circuits[circuits.size()-1];
+            circuits.resize( circuits.size() -1 );
+        }
+        selected = -1;
+        return;
+    }
+    else if ( idx >= 0 && idx < wires.size() )
+    {
+        wires[idx] = wires[wires.size()-1];
+        wires.resize( wires.size() -1 );
+    }
+    selected = -1;
+    
+}
+
 void processHits (GLint hits, GLuint buffer[])
 {
    unsigned int i, j;
@@ -180,15 +212,15 @@ void processHits (GLint hits, GLuint buffer[])
 
    printf ("hits = %d\n", hits);
    ptr = (GLuint *) buffer; 
-   for (i = 0; i < hits; i++) {	/*  for each hit  */
+   for (i = 0; i < hits; i++) {
       names = *ptr;
 	  printf("names: %i ...", names);
 	  ptr++;
 	  printf("z min= %d\n", *ptr);
 	  ptr+=2;
 
-      for (j = 0; j < names; j++) { /*  for each name */
-         printf("j: %i typ :%i | ", j,  components[*ptr].type);
+      for (j = 0; j < names; j++) {
+         printf("j: %i yp :%i | ", j,  circuits[*ptr].type);
          ptr++;
       }
       printf ("\n");
@@ -200,53 +232,52 @@ int get_id(int hits, GLuint buffer[], int &type)
 	GLuint *ptr = (GLuint *) buffer;
 	if(*ptr == 2) 
 	{
-		type=0; // component
+		type=0; // circuit
 		ptr++;
 	}
 	else type=1; // wire
 	ptr+=3;
     if (hits == 0) return -1;
 	else return *ptr;
-	
-    //TODO: grab name from the select buffer and return it
-
-   // return 42;
 }
-void drawCursor(int x, int y)
+void draw_cursor(int x, int y)
 {
-
-	//std::cout<<"drawing "<<x<<" "<<y<<std::endl;
         glPushMatrix();
         glLoadIdentity();
-        glColor3f(0.0, 0.5, 0.7);
-        glBegin(GL_QUADS);
-            glVertex2f(x-1, y-1);
-            glVertex2f(x-1, y+1);
-            glVertex2f(x+1, y+1);
-            glVertex2f(x+1, y-1);
+        glColor3f(0.8, 0.9, 0.95);
+        glBegin(GL_LINES);
+            glVertex2f(-width*0.5, y); glVertex2f(width*0.5, y);
+            
+            glVertex2f(x, -height*0.5); glVertex2f(x, height*0.5);
         glEnd();
         glPopMatrix();
        
 }
 void mouse(int button, int state, int x, int y)
 {
-    ctrl_down = (glutGetModifiers() & GLUT_ACTIVE_CTRL) != 0;
-    alt_down = (glutGetModifiers() & GLUT_ACTIVE_ALT) != 0;
-    shift_down = (glutGetModifiers() & GLUT_ACTIVE_SHIFT) != 0;
 	int cx=x;
 	int cy=y;
     x = x - width/2;
     y = (height-y-1) - height/2;
-    mx=x;
-    my=y;
-	//glutPostRedisplay();
-	//std::cout<<mx <<" "<< my<<std::endl;
-	
-	GLuint selectBuf[BUFSIZE];
+    mouse_x=x;
+    mouse_y=y;
+
+    // insert elements in the scene 
+    if ( add_elt == WIRE )
+    {
+        wires.push_back( Wire(x,y,x+50.0,y ) );
+        add_elt = NOTHING;
+    }
+    else if ( add_elt == CIRCUIT )
+    {
+        circuits.push_back( Circuit( next_circuit, x, y ) );
+        add_elt = NOTHING;
+    }
+
+    GLuint selectBuf[BUFSIZE];
     GLint hits;
-    GLint viewport[4];    
-	
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    GLint viewport[4];
+    if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON)
 	{
 
 		glGetIntegerv (GL_VIEWPORT, viewport);
@@ -259,50 +290,22 @@ void mouse(int button, int state, int x, int y)
 		glMatrixMode (GL_PROJECTION);
 		glPushMatrix ();
 		glLoadIdentity ();
-		//std::cout<<"window coordinates: "<<cx<< " "<<viewport[3]-cy<<std::endl;
-		//std::cout<<"w/2  h/2: "<<width/2<< " "<<height/2<<std::endl;
-		//std::cout<<"viewport"<<viewport[0]<< " "<<viewport[1]<< " "<<viewport[2]<< " "<<viewport[3]<< " "<<std::endl;
-		gluPickMatrix ((GLdouble) cx, (GLdouble) (viewport[3] - cy), 16.0, 16.0, viewport);// it is using window coordinates!
+		gluPickMatrix ((GLdouble) cx, (GLdouble) (viewport[3] - cy), 16.0, 16.0, viewport);
 		gluOrtho2D (-width/2, width/2, -height/2, height/2);
-		draw_components(GL_SELECT);
+		draw_circuits(GL_SELECT);
 
 
 		glMatrixMode (GL_PROJECTION);
 		glPopMatrix ();
 		glFlush();
-		//glutSwapBuffers ();
 		hits = glRenderMode (GL_RENDER);
 		processHits(hits, selectBuf);
-		selected= get_id(hits, selectBuf, type);
-		std::cout<<"Selected: "<<selected<<std::endl;
-		//glutPostRedisplay();
+        int temp = get_id(hits, selectBuf, selected_type); 
+		if(temp != -1 || selected_type == 1) selected = temp;
 	}
 	
-	if (selected!=-1)
-    {
-		std::cout<<"Wybrany: "<<selected<<std::endl;
-        if (button==GLUT_LEFT_BUTTON && state==GLUT_UP)
-		{
-			if(ctrl_down)
-			{
-				if (type==0)	components.erase(components.begin()+selected);
-				else wires.erase(wires.begin()+selected);
-			}
-			selected = -1;
-			glutPostRedisplay();
-			return;
-		}
-
-		
-    }
 	
-		glutPostRedisplay();
-    //TODO: Draw components with the 'select' render mode.
-    //      Use gluPickMatrix to restrict drawing to a 16x16 pixels area near
-    //      cursor (x,y).
-    
-    //glutPostRedisplay();
-	
+	glutPostRedisplay();
 } 
 
 
@@ -310,18 +313,10 @@ void display(void)
 {
 
     glClear(GL_COLOR_BUFFER_BIT);
-  
-	draw_components(GL_RENDER);  
-	drawCursor(mx,my);
+	draw_cursor(mouse_x,mouse_y);  
+	draw_circuits(GL_RENDER);  
 	glFlush();
-    //glutSwapBuffers();
 }
-
-/*  processHits prints out the contents of the 
- *  selection array.
- */
-
-
 
 void reshape(int w, int h)
 {
@@ -339,30 +334,33 @@ void reshape(int w, int h)
     glLoadIdentity();
 }
 
+void zoomIn()
+{
+    zoom *= 1.5;
+}
+
+void zoomOut()
+{
+    zoom /= 1.5;
+}
+
 void keyboard(unsigned char key, int x, int y)
 {
    switch (key) {
       case 27:
          exit(0);
          break;
-	  case '=':
-		  //std::cout<<"zoom"<<std::endl;
-		  zoom*=2;
-		  break;
-	  case '-':
-		  zoom/=2;
-		  break;
 	  case 'w':
-		  translation_y-=10;
+		  scroll_y-=10;
 		  break;
 	  case 's':
-		  translation_y+=10;
+		  scroll_y+=10;
 		  break;
 	  case 'd':
-		  translation_y-=10;
+		  scroll_y-=10;
 		  break;
 	  case 'a':
-		  translation_y+=10;
+		  scroll_y+=10;
 		  break;
 	  default:
 		  std::cout<<"key "<< key <<std::endl;
@@ -377,76 +375,124 @@ void motion(int x, int y)
     x = x - width/2;
     y = (height-y-1) - height/2;
 
-    //TODO: This function is called when the mouse is moved.
-    //      Handle translation, rotation and scaling of the
-    //      selected component here.
-	if(selected<0) return;
-	if(type==1)
+	if(selected <0 ) return;
+    
+	if (selected_type==1)
 	{
-		wire_t & w=wires[selected];
-		if((w.start_x-x)*(w.start_x-x) +(w.start_y-y)*(w.start_y-y) < (w.end_x-x)*(w.end_x-x) +(w.end_y-y)*(w.end_y-y))
+        if(selected >= wires.size() ) return;
+		Wire & w=wires[selected];
+		if((w.x1-x)*(w.x1-x) +(w.y1-y)*(w.y1-y) < (w.x2-x)*(w.x2-x) +(w.y2-y)*(w.y2-y))
 		{
-			w.start_x=x;
-			w.start_y=y;
+			w.x1=x;
+			w.y1=y;
 		}
 		else
 		{
-			w.end_x=x;
-			w.end_y=y;
+			w.x2=x;
+			w.y2=y;
 		}
 		glutPostRedisplay();
 		return;
 	}
-	component_t & c=components[selected];
-	
-	if(shift_down)
-	{	
-		c.rx=(y - c.ty);
-	}
-	else if(alt_down)
-	{
-		c.sx=(x-c.tx)+15.;
-		c.sy=(y-c.ty)+15.;
-	}
-	else
-	{
-		c.tx=x;
-		c.ty=y;
-	}
-	
-    //save mouse position for later
-    //mx = x; my = y;    
 
+    if ( motion_wait <= 0 )
+    {
+        circuits[selected].x=x;
+        circuits[selected].y=y;
+    }
+    
     glutPostRedisplay();
 }
+
+void scale_up( int idx )
+{
+    if( idx < 0 ) return;
+    if( idx >= circuits.size() ) return;
+    
+    circuits[idx].scale *= 1.5;
+}
+
+void scale_down( int idx )
+{
+    if( idx < 0 ) return;
+    if( idx >= circuits.size() ) return;
+    
+    circuits[idx].scale /= 1.5;
+}
+
+void rotate_cw( int idx )
+{
+    if( idx < 0 ) return;
+    if( idx >= circuits.size() ) return;
+    
+    circuits[idx].rot -= 45.0;
+}
+
+void rotate_ccw( int idx )
+{
+    if( idx < 0 ) return;
+    if( idx >= circuits.size() ) return;
+    
+    circuits[idx].rot -= 45.0;
+}
+
 void menu(int c)
 {
-	if(c==3) wires.push_back(wire_t(mx, my, mx+20, my));
-    else components.push_back(component_t(c,mx,my));
+    cout << "selected= " << selected << endl;
+
+    switch ( c )
+    {
+        case 3: { add_elt = WIRE; break; }
+        case 4: { zoomIn(); break; }
+        case 5: { zoomOut(); break; }
+        case 6: { erase_circuit( selected ); break; }
+        case 7: { rotate_cw(selected); break; }
+        case 8: { rotate_cw(selected); break; }
+        case 9: { scale_up(selected); break; }
+        case 10:{ scale_down(selected); break; }
+        default:{
+            add_elt = CIRCUIT;
+            next_circuit = c;
+            break;
+        }
+    }
+
+    motion_wait = 20;// to avoid moving things when selecting menu items
+     
     glutPostRedisplay();
 }
-/* Main Loop */
+
+
+void timer_function(int)
+{
+    if (motion_wait > 0) --motion_wait;
+    glutTimerFunc(100,timer_function,0);
+}
+
+
 int main(int argc, char** argv)
 {
-  //add some default components
-    //components.push_back(component_t(capacitor, 0, 0));
-    components.push_back(component_t(resistor, 0, 0));
-    //components.push_back(component_t(transistor, 256, 0));
-
-    //setup glut
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(512, 512);
     glutInitWindowPosition(100, 100);
     glutCreateWindow(argv[0]);
     glutCreateMenu(menu);
-    glutAddMenuEntry("New capacitor..",0); 
-    glutAddMenuEntry("New resistor..",1); 
-    glutAddMenuEntry("New transistor",2); 
+    glutAddMenuEntry("New capacitor..",CAPACITOR); 
+    glutAddMenuEntry("New resistor..",RESISTOR); 
+    glutAddMenuEntry("New transistor",TRANSISTOR); 
 	glutAddMenuEntry("New wire",3);
+	glutAddMenuEntry("Zoom in",4);
+	glutAddMenuEntry("Zoom out",5);
+	glutAddMenuEntry("Erase",6);
+	glutAddMenuEntry("Rotate cw",7);
+	glutAddMenuEntry("Rotate ccw",8);
+	glutAddMenuEntry("Scale up",9);
+	glutAddMenuEntry("Scale down",10);
     glutAttachMenu(GLUT_RIGHT_BUTTON); 
     glutReshapeFunc(reshape);
-    glutDisplayFunc(display); 
+    glutDisplayFunc(display);
+    glutTimerFunc(100,timer_function,0);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
