@@ -3,7 +3,8 @@ if [ ! -d "bin" ]; then
   mkdir bin
 fi
 echo "compiling Week 3 exercises..."
-#gcc Part1.cpp -lglut -lGLU -lGL -o bin/Part1  && echo "--Part1"
+gcc Transistors.cpp -lglut -lGLU -lGL -o bin/Transistors  && echo "--Transistors"
+exit
 gcc code/line.c -lglut -lGLU -lGL -o bin/line  && echo "--line"
 gcc code/pick.c -lglut -lGLU -lGL -o bin/pick  && echo "--pick"
 gcc code/PICKDEPT.C -lglut -lGLU -lGL -o bin/pickdept  && echo "--pickdept"
