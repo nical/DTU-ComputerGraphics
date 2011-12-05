@@ -16,15 +16,15 @@
  */
 
 #include <stdlib.h>
-#include <gl/glut.h>
+#include <GL/glut.h>
 #include <math.h>
 #include <iostream>
-#define MOTION 4
-#define M_PI       3.14159265358979323846
+#define MOTION 1
 
 
+static int animation = MOTION;
 static int spin = 0;
-static float eye_poss= 0.0;
+static float eye_pos= 0.0;
 
 /*  Initialize material property, light source, lighting model,
  *  and depth buffer.
@@ -46,29 +46,25 @@ void init(void)
 void display(void)
 {
    
+   GLfloat position[] = { 0.0, 1.5,0.0, 1.0 };
 
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ 	 glLoadIdentity();
+   
+   gluLookAt (5.0* cos(eye_pos), 5.0*cos(eye_pos), 5.0*sin(eye_pos) , 0.0, 0.0, 0.0, 0.0, sin(eye_pos), -cos(eye_pos));
+   
    glPushMatrix ();
-   glLoadIdentity();
-   glTranslated (0.0, 1.5, 0.0);
-    glColor3f (0.0, 1.0, 1.0);
-	glDisable (GL_LIGHTING);
-	gluLookAt (0.0, 0.0, 5.0 , 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-	glutWireCube (0.1);  
-	glLoadIdentity();
-   if(MOTION==1 || MOTION==3) gluLookAt (5.0* cos(eye_poss), 5.0*cos(eye_poss), 5.0*sin(eye_poss) , 0.0, 0.0, 0.0, 0.0, sin(eye_poss), -cos(eye_poss));
-   else if(MOTION==4) gluLookAt (0.0, 5.0*cos(eye_poss), 5.0*sin(eye_poss) , 0.0, 0.0, 0.0, 0.0, sin(eye_poss), -cos(eye_poss));
-   else gluLookAt (0.0, 0.0, 5.0 , 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-   //std::cout<<sin(eye_poss)<<std::endl;
-   glPushMatrix ();
+   
    glRotated ((GLdouble) spin, 1.0, 0.0, 0.0);
    
 
-   //glTranslated (0.0, 0.0, 1.5);
-   //glDisable (GL_LIGHTING);
+   glTranslated (0.0, 0.0, 1.5);
+   glDisable (GL_LIGHTING);
    glColor3f (0.0, 1.0, 1.0);
-   //glutWireCube (0.1);
+   glutWireCube (0.1);
    glEnable (GL_LIGHTING);
+   glLightfv (GL_LIGHT0, GL_POSITION, position);
+
    glPopMatrix ();
 
    glutSolidTorus (0.275, 0.85, 8, 15);
@@ -78,20 +74,14 @@ void display(void)
 
 void reshape (int w, int h)
 {
-   
-		GLfloat position[] = { 0.0, 1.5,0.0, 1.0 };
    glViewport (0, 0, (GLsizei) w, (GLsizei) h);
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity();
    gluPerspective(40.0, (GLfloat) w/(GLfloat) h, 1.0, 20.0);
-   //glRotated((GLdouble) eye_poss, 1.0, 0.0, 0.0);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
-    
-	   glLightfv (GL_LIGHT0, GL_POSITION, position);
 }
 
-/* ARGSUSED2 */
 void mouse(int button, int state, int x, int y)
 {
    switch (button) {
@@ -103,8 +93,7 @@ void mouse(int button, int state, int x, int y)
          break;
 	  case GLUT_RIGHT_BUTTON:
          if (state == GLUT_DOWN) {
-            eye_poss = (eye_poss + 0.2);
-		//	glFlush();
+            eye_pos = (eye_pos + 0.2);
             glutPostRedisplay();
          }
          break;
@@ -113,10 +102,16 @@ void mouse(int button, int state, int x, int y)
    }
 }
 
-/* ARGSUSED1 */
 void keyboard(unsigned char key, int x, int y)
 {
    switch (key) {
+     case '+':
+        if (animation < 4) {
+          animation++;
+        } else {
+          animation = 1;
+        }
+     break;
       case 27:
          exit(0);
          break;
@@ -125,27 +120,26 @@ void keyboard(unsigned char key, int x, int y)
 
 void timer(int value)
 {
-	switch(MOTION){
+	switch(animation){
 	case 1:
 		spin = (spin + 2) % 360;
         glutPostRedisplay();
 		break;
 
 	case 2:
-		eye_poss +=0.01;
+		eye_pos +=0.01;
 		glutPostRedisplay();
 		break;
 
 	case 3:
-		eye_poss +=0.01;
+		eye_pos +=0.01;
 		spin = (spin + 2) % 360;
 		glutPostRedisplay();
 		break;
 
 	case 4:
-		eye_poss +=0.01;
-		//spin = (spin + 2) % 360;
-		//eye_poss =spin/360.0 * 2 * 3.14;
+		spin = (spin + 2) % 360;
+		eye_pos =spin/360.0 * 2 * 3.14;
 		glutPostRedisplay();
 		break;
 	default:
