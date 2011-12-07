@@ -1,0 +1,42 @@
+\chapter{Week 10 - Environment mapping}
+
+Environment mapping is produces nice effects as it allows to approximate reflections
+and refractions. This technique mainly consists in pre computing the background and
+save it in a set of textures, mapped in a skybox or a skydome (in this assignment we
+will use a skybox). This method is best suited for static scenes, as any change in
+the environment needs to betaken into account in the environment map, and it is normally
+used with one environment map per object that needs this technique, since the object should
+be place at the center. It is still possible to use it in dynamic scenes. Many racing
+car videogames make use of one simplified environment maps per car and update it each
+frame to give nice chrome effects.
+
+\section{Skybox}
+
+A skybox is rendered as shown in figure \ref{skyb}.
+
+To load the textures from the disk we used the SOIL\footnote{Simple OpenGL Image Library available at \url{http://lonesock.net/soil.html}.}
+library that loads images and store them in OpenGL textures.
+
+\image{Week10/EnvMapOnlySkybox.png}{Skybox.}{0.5}{skyb}
+
+\section{Glass sphere}
+
+
+The glass shader gives nice results as we can see in figure \ref{envFresnel}.
+However, the reflections are hard to see because the fresnel equation makes reflections
+visible near the border where the normal is almost perpendicular to the eye vector.
+The figure \ref{env100Fresnel} shows an exagerated version where the reflectance
+is multiplied by 100 in order to show reflections.
+
+\image{Week10/EnvMapFresnel.png}{Glass shader featuring refaction and refraction using Schlick’s Fresnel approximation. }{0.5}{envFresnel}
+\image{Week10/EnvMap100Fresnel.png}{Glass shader with exagerated reflectance (100 times).}{0.5}{env100Fresnel}
+
+
+\section{Normal mapping}
+
+We applied normal mapping in the glass shader as can be seen in figures \ref{img:both}, \ref{img:refract}, \ref{img:reflect}.
+
+\image{Week10/both.png}{Glass shader featuring refaction, refraction and normal mapping with exagerated reflectance (x100).}{0.5}{img:both}
+
+\image{Week10/refracted2.png}{Glass shader featuring refaction and normal mapping.}{0.5}{img:refract}
+\image{Week10/reflected1.png}{Glass shader featuring reflection and normal mapping.}{0.5}{img:reflect}
