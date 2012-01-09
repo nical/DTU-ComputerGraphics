@@ -1,0 +1,74 @@
+\chapter{Week 11 - NURBS curves and surfaces}
+
+\section{Part 1 - Curves}
+
+The relation between degree order and number of knots is:
+#knots = Degree + #ControlPoints + 1 = Degree + Order
+
+\subsection{Bezier curves}
+
+Figure \ref{beziergl} shows a bezier curve of order 4 displayed using opengl
+commands (\textit{glMap1f} and \textit{glEvalCoord1f}).
+
+We also implemented bezier curves of order n without opengl, using the difinition
+of a bezier curve:
+\begin{lstlisting}[caption=Generic bezier curve]
+template<typename T>
+T BezierCurve( T * points, int order, float t )
+{
+    int n = order-1;
+    T result;
+    for(int dim = 0; dim < T::Dimension; ++dim)
+    {
+        for(int i = 0; i <= n; ++i)
+        {
+            result[dim] += 
+                  factorial(n) / (factorial(i)*factorial(n-i) )
+                * pow(1-t,n-i)
+                * pow(t,i)
+                * points[i][dim];
+        }
+    }
+    return result;
+} 
+\end{lstlisting}
+
+Figure \ref{beziernogl} shows bezier curves of order 3, 4, 5, 6 and 7 using our implementation.
+
+A bezier curve of order N requires N control points, (so the cubic bezier needs 4 control points). 
+
+\image{Week11/bezier.png}{4th order (cubic) Bezier curve.}{0.5}{beziergl}
+\image{Week11/bezier3_7.png}{Bezier curves of order 3 to 7.}{0.5}{beziernogl}
+
+\subsection{Non uniform B-splines}
+
+the glu library provides helper functions to render NURBS curves and surfaces. We
+used it to render curves using the following knot vectors:
+\begin{enumerate}
+    \item \{ 0.0, 0.0, 0.0, 0.0, 0.10, 0.5, 0.90, 1.0, 1.0, 1.0, 1.0 \} 
+    \item \{ 0.0, 0.0, 0.0, 0.0, 0.25, 0.5, 0.75, 1.0, 1.0, 1.0, 1.0 \} 
+    \item \{ 0.0, 0.0, 0.0, 0.0, 0.40, 0.5, 0.60, 1.0, 1.0, 1.0, 1.0 \}
+    \item \{ 0.0, 0.0, 0.0, 0.0, 0.50, 0.5, 0.50, 1.0, 1.0, 1.0, 1.0 \}
+\end{enumerate}
+The result is shown if figure \ref{nubs}
+
+\image{Week11/nonUniformBSplines.png}{Non uniform B-splines of order 4 with different clamped knot vectors}{0.5}{ubs}
+
+We used zeros and ones at the beginning and end of the knot vector in order to have
+the curve start at the first control point and stop at the last. If we don't do so,
+we obtain something similar to the uniform B-spline showed in figure \ref{ubs}.
+
+Note that the 4th knot vector leads to the same curve as the cubic bezier.
+
+\subsection{uniform B-splines}
+The only difference between uniform and non-uniform B-splines lies in the knot vector.
+Uniform B-splines introduce a new constraint which is that knots have to be equally
+spaced. So we can render a uniform B-spline curve using the same method as with
+non-uniform ones, with the following knot vector:
+\{ 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 \}
+
+Which results in the curve displayed in figure \ref{ubs}.
+
+\image{Week11/uniformBSpline.png}{Uniform B-spline}{0.5}{ubs}
+
+\section{Part 2 - Surfaces}

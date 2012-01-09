@@ -132,7 +132,7 @@ void display(void)
     glLoadIdentity ();
     gluLookAt (0., 5., 1., 0., 5., 0., 0., 1., 0.);
 
-
+/*
     // opengl 4th order (cubic) bezier curve
     glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpoints[0][0]);
     glEnable(GL_MAP1_VERTEX_3);
@@ -141,7 +141,7 @@ void display(void)
       for (i = 0; i <= 30; i++) 
          glEvalCoord1f((GLfloat) i/30.0);
     glEnd();
-
+*/
 
     // draw ctrl points as dots
     glPointSize(5.0);
@@ -160,24 +160,14 @@ void display(void)
     }
     glEnd();
 /*
-    // our generic bezier curve implementation
-    glColor3f(1.0, 0.0, 0.0);
-    glBegin(GL_LINE_STRIP);
-    for(int i = 0; i < 42; ++i)
-    {
-        vec<3> p = BezierCurve(vecCtrlPoints, 6, (float)i/42.0 );
-        glVertex3f(p[0],p[1],p[2]);
-    }
-    glEnd();
-*/
     glColor3f(1.0, 0.0, 0.0);
     DisplayGenericBezierCurve(vecCtrlPoints, 7);
     DisplayGenericBezierCurve(vecCtrlPoints, 6);
     DisplayGenericBezierCurve(vecCtrlPoints, 5);
     DisplayGenericBezierCurve(vecCtrlPoints, 4);
     DisplayGenericBezierCurve(vecCtrlPoints, 3);
+*/
 
-/*
 
     GLfloat nurbsKnot1[] = {  0.0, 0.0, 0.0, 0.0
                             , 0.1, 0.5, 0.9
@@ -208,7 +198,7 @@ void display(void)
     // uniform b spline (knots are uniformly growing)
     glColor3f(0.6, 0.0, 0.6);
     DisplayNURBSCurve(nurbsCurve, nurbsKnotUniform, 11 );
-*/
+
     
     glFlush();
 }
