@@ -43,16 +43,18 @@ struct vec
     }
 };
 
+
 vec<3> vecCtrlPoints [7];
 
+// nth order besizer curve (general)
 template<typename T>
 T BezierCurve( T * points, int n, float t )
 {
     T result;
     for(int dim = 0; dim < T::Dimension; ++dim)
     {
-        std::cout << "-------" << std::endl;
-        std::cout << pow(t,1) << std::endl;
+        //std::cout << "-------" << std::endl;
+        //std::cout << pow(t,1) << std::endl;
         for(int i = 0; i <= n; ++i)
         {
             result[dim] += 
@@ -62,10 +64,11 @@ T BezierCurve( T * points, int n, float t )
                 * points[i][dim];
         }
     }
-    cout << pow(0.5, 0) << endl;
+    //cout << pow(0.5, 0) << endl;
     return result;
 }
 
+// Cubic besizer curve (specific)
 template<typename T>
 T CubicBezierCurve( T* points, float t )
 {
@@ -80,66 +83,99 @@ T CubicBezierCurve( T* points, float t )
     return result;
 }
 
+void nurbsError(GLenum errorCode)
+{
+    const GLubyte *estring;
+    estring = gluErrorString(errorCode);
+    cout << "Nurbs Error: " << estring << endl;
+    exit (0);
+}
+
+GLUnurbsObj* nurbsCurve;
+GLfloat nurbsKnot[] = {1.0,2.0,3.0,4.0,5.0,6.,7.0,8.0,9.0,10.0};
+GLuint nurbsKnotNb = 10;
+
 void init(void)
 {
-   glClearColor(1.0, 1.0, 1.0, 0.0);
-   glShadeModel(GL_FLAT);
+    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glShadeModel(GL_FLAT);
 
     for(int i = 0; i < 7; ++i)
     {
         for(int j = 0; j < 3; ++j)
             vecCtrlPoints[i][j] = ctrlpoints[i][j];
     }
-/*
-   theNurb = gluNewNurbsRenderer ();
-    
-	gluNurbsProperty (theNurb, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
-	gluNurbsProperty (theNurb, GLU_U_STEP, 100);
-*/
 
+    // 4th order bezier curve using legacy OpenGL facilities
+    glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 5, &ctrlpoints[0][0]);
+    glEnable(GL_MAP1_VERTEX_3);
 
+    // glu NURBS
+    nurbsCurve = gluNewNurbsRenderer();
+    assert( nurbsCurve );
+	gluNurbsProperty(nurbsCurve, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
+	gluNurbsProperty(nurbsCurve, GLU_U_STEP, 100);
+    gluNurbsCallback(nurbsCurve, GLU_ERROR, (GLvoid (*)()) nurbsError);
+    assert( glGetError() == GL_NO_ERROR );
 }
 
 void display(void)
 {
-   int i;
+    int i;
 
-   glClear(GL_COLOR_BUFFER_BIT);
-   glColor3f(0.0, 0.0, 0.0);
-  
-	glLoadIdentity ();
-	gluLookAt (0., 5., 1., 0., 5., 0., 0., 1., 0.);
-
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    glLoadIdentity ();
+    gluLookAt (0., 5., 1., 0., 5., 0., 0., 1., 0.);
 
 
-/* The following code displays the control points as dots and line strip. */
-   glPointSize(5.0);
-   glColor3f(1.0, 0.0, 0.0);
-   glBegin(GL_POINTS);
+    // opengl 4th order bezier curve
+    glColor3f(0.0, 1.0, 0.0);
+    glBegin(GL_LINE_STRIP);
+      for (i = 0; i <= 30; i++) 
+         glEvalCoord1f((GLfloat) i/30.0);
+    glEnd();
+
+
+    // draw ctrl points as dots
+    glPointSize(5.0);
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_POINTS);
       for (i = 0; i < 7; i++) 
          glVertex3fv(&ctrlpoints[i][0]);
-   glEnd();
+    glEnd();
 
-
-glColor3f(0.0, 0.0, 0.0);
-glBegin(GL_LINE_STRIP);
+    // draw lines between ctrl points
+    glColor3f(0.0, 0.0, 0.0);
+    glBegin(GL_LINE_STRIP);
     for (i = 0; i < 7; i++) 
     {
       glVertex3fv(&ctrlpoints[i][0]);
     }
-glEnd();
+    glEnd();
 
+    // our generic bezier curve implementation
+    glColor3f(1.0, 0.0, 0.0);
     glBegin(GL_LINE_STRIP);
     for(int i = 0; i < 42; ++i)
     {
-        vec<3> p = BezierCurve(vecCtrlPoints, 4, (float)i/42.0 );
-        //vec<3> p = CubicBezierCurve(vecCtrlPoints, (float)i/42.0 );
+        vec<3> p = BezierCurve(vecCtrlPoints, 6, (float)i/42.0 );
         glVertex3f(p[0],p[1],p[2]);
-        assert( (float)i/42.0 <= 1.0 );
     }
     glEnd();
 
-   glFlush();
+    // glu NURBS curve
+    glGetError();
+    glColor3f(0.0, 0.0, 1.0);
+    gluBeginCurve(nurbsCurve);
+    gluNurbsCurve(
+        nurbsCurve, nurbsKnotNb, nurbsKnot, 3
+        , &ctrlpoints[0][0], 4, GL_MAP1_VERTEX_3);
+    gluEndCurve(nurbsCurve);
+    assert( glGetError() == GL_NO_ERROR );
+
+
+    glFlush();
 }
 
 void reshape(int w, int h)
@@ -178,5 +214,6 @@ int main(int argc, char** argv)
    glutReshapeFunc(reshape);
    glutKeyboardFunc (keyboard);
    glutMainLoop();
+   gluDeleteNurbsRenderer(nurbsCurve);
    return 0;
 }
