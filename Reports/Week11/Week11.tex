@@ -3,7 +3,7 @@
 \section{Part 1 - Curves}
 
 The relation between degree order and number of knots is:
-#knots = Degree + #ControlPoints + 1 = #ControlPoints + Order
+$knots = Degree + ControlPoints + 1 = ControlPoints + Order$
 
 In the case of bezier curves, we don't need to express them in function of the knot
 vector, but it can be done (as we will see in this part).
@@ -67,7 +67,7 @@ used it to render curves using the following knot vectors:
 \end{enumerate}
 The result is shown if figure \ref{nubs}
 
-\image{Week11/nonUniformBSplines.png}{Non uniform B-splines of order 4 with different clamped knot vectors}{0.5}{ubs}
+\image{Week11/nonUniformBSplines.png}{Non uniform B-splines of order 4 with different clamped knot vectors}{0.5}{nubs}
 
 We used zeros and ones at the beginning and end of the knot vector in order to have
 the curve start at the first control point and stop at the last. If we don't do so,
