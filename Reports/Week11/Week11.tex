@@ -3,7 +3,22 @@
 \section{Part 1 - Curves}
 
 The relation between degree order and number of knots is:
-#knots = Degree + #ControlPoints + 1 = Degree + Order
+#knots = Degree + #ControlPoints + 1 = #ControlPoints + Order
+
+In the case of bezier curves, we don't need to express them in function of the knot
+vector, but it can be done (as we will see in this part).
+
+In most cases, the number of coordinates per control points corresponds to the dimmension
+of the space containing the curve/surface (\textit{not} the mapping, so 3 in 3D space for instance)
+plus the eventual vertex attributes such as texture coordinates, normals, etc.
+
+Rational B-splines add an extra component to each control point, which is the weight
+of the point. This Allows better control on the curve, for instance in cases where
+the density of control points is important in some places, one might want to correct
+the effect by assigning lower weights on such points. It also allows to represent
+shapes that could not be represented without weights, such as perfect circles.
+
+The number of control points needed is generally equal to the order of the curve.
 
 \subsection{Bezier curves}
 
