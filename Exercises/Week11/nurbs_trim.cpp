@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#define PI 3.14159265
+
 GLfloat ctlpoints[8][4][3];
 int showPoints = 0;
 
@@ -66,7 +68,19 @@ void display(void)
                         , 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
    GLfloat knots2[8] = {0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0};
    int i, j;
+      
+   GLfloat edgePt[5][2] =
+        {{0.0, 0.0}, {1.0, 0.0}, {1.0, 1.0}, {0.0, 1.0}, 
+        {0.0, 0.0}};
 
+    GLfloat pwlPt[42][2];
+    for(unsigned int k = 0; k < 42; ++k)
+    {
+        pwlPt[k][0] = 0.5 + 0.3 * cos(2.0*PI*k/41.0);
+        pwlPt[k][1] = 0.5 + 0.3 * sin(-2.0*PI*k/41.0);
+    }
+
+        
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glPushMatrix();
@@ -78,6 +92,15 @@ void display(void)
                    12, knots1, 8, knots2,
                    4 * 3, 3, &ctlpoints[0][0][0], 
                    6, 4, GL_MAP2_VERTEX_3);
+    // trim               
+    gluBeginTrim (theNurb);
+    gluPwlCurve(theNurb, 5, &edgePt[0][0], 2, GLU_MAP1_TRIM_2);
+    gluEndTrim (theNurb);
+    
+    gluBeginTrim (theNurb);
+    gluPwlCurve (theNurb, 42, &pwlPt[0][0], 2, GLU_MAP1_TRIM_2);
+    gluEndTrim (theNurb);
+
    gluEndSurface(theNurb);
 
    if (showPoints) {
